@@ -21,6 +21,19 @@
   --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
 }
 
+[saved-theme="light"] {
+  --terminal-green: #2d6a4f;
+  --terminal-cyan: #0369a1;
+  --terminal-amber: #b45309;
+  --terminal-red: #b91c1c;
+  --terminal-bg: #f4f4f0;
+  --terminal-bg-alt: #e0e0d8;
+  --terminal-border: #c4c4bc;
+  --terminal-dim: #8b8b83;
+  --terminal-prompt: #2d6a4f;
+  --terminal-cursor: #2d6a4f;
+}
+
 // ── Body & Base ───────────────────────────────────────────────
 body {
   font-family: var(--font-mono) !important;
