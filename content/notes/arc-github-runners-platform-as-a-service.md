@@ -3,6 +3,7 @@ title: "ARC GitHub Runners as a Platform Service"
 date: 2026-06-27
 tags: [github-actions, kubernetes, arc, eks, devops, platform-engineering, security, irsa]
 description: "A production blueprint for running GitHub Actions self-hosted runners as a centralized platform service on Amazon EKS — ephemeral pods, IRSA two-hop trust, multi-tenant namespaces, and zero long-lived credentials."
+image: "https://nikila.dev/images/arc-pull-model.png"
 draft: false
 ---
 
