@@ -205,6 +205,11 @@ async function setupExplorer(currentSlug: FullSlug) {
     const explorerUl = explorer.querySelector(".explorer-ul")
     if (!explorerUl) continue
 
+    // Clear existing content before rebuilding to prevent duplication on SPA navigation
+    const overflowEnd = explorerUl.querySelector(".overflow-end")
+    explorerUl.replaceChildren()
+    if (overflowEnd) explorerUl.appendChild(overflowEnd)
+
     // Create and insert new content
     const fragment = document.createDocumentFragment()
     for (const child of trie.children) {
