@@ -161,44 +161,57 @@ ShareButtons.css = `
 // This runs in the browser after the DOM is ready — clean, no inline escaping issues
 ShareButtons.afterDOMLoaded = `
 (function() {
+  var controller = null;
+
   function initShareCopyBtn() {
-    var btn = document.getElementById("share-copy-btn");
+    // Cancel any previously registered listeners before re-initialising
+    if (controller) controller.abort();
+    controller = new AbortController();
+    var signal = controller.signal;
+
+    // Use class selector so it still works after SPA navigation replaces the DOM
+    var btn = document.querySelector(".share-copy");
     if (!btn) return;
 
     btn.addEventListener("click", function() {
-      // Always use the canonical URL baked into the data attribute (nikila.dev, not localhost)
       var url = btn.getAttribute("data-canonical-url");
       if (!url) return;
 
-      navigator.clipboard.writeText(url).then(function() {
-        var originalHTML = btn.innerHTML;
-        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+      var originalHTML = btn.innerHTML;
+      var checkSVG = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+
+      function showCopied() {
+        btn.innerHTML = checkSVG + " Copied!";
         btn.classList.add("copied");
         setTimeout(function() {
           btn.innerHTML = originalHTML;
           btn.classList.remove("copied");
         }, 2000);
-      }).catch(function() {
-        // Fallback for browsers that block clipboard without user gesture
-        var ta = document.createElement("textarea");
-        ta.value = url;
-        ta.style.position = "fixed";
-        ta.style.opacity = "0";
-        document.body.appendChild(ta);
-        ta.focus();
-        ta.select();
-        document.execCommand("copy");
-        document.body.removeChild(ta);
-        btn.textContent = "Copied!";
-        setTimeout(function() { btn.textContent = "Copy Link"; }, 2000);
-      });
-    });
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(showCopied).catch(function() {
+          fallbackCopy(url, showCopied);
+        });
+      } else {
+        fallbackCopy(url, showCopied);
+      }
+    }, { signal: signal });
   }
 
-  // Run on initial page load
-  initShareCopyBtn();
+  function fallbackCopy(url, onSuccess) {
+    var ta = document.createElement("textarea");
+    ta.value = url;
+    ta.style.cssText = "position:fixed;top:0;left:0;opacity:0;pointer-events:none;";
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand("copy"); onSuccess(); }
+    catch(e) { console.warn("Copy failed:", e); }
+    document.body.removeChild(ta);
+  }
 
-  // Re-run after SPA navigations (Quartz uses client-side routing)
+  initShareCopyBtn();
   document.addEventListener("nav", initShareCopyBtn);
 })();
 `

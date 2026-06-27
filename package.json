@@ -110,5 +110,6 @@
     "prettier": "^3.6.2",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2"
-  }
+  },
+  "site_version": "0.1.0"
 }
