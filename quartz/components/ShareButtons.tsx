@@ -9,8 +9,9 @@ const ShareButtons: QuartzComponent = ({ fileData, cfg, displayClass }: QuartzCo
   const slug = fileData.slug
   if (!slug || slug === "index" || slug.startsWith("tags/")) return null
 
-  const pageUrl = `https://${cfg.baseUrl}/${slug}`
-  const encodedUrl = encodeURIComponent(pageUrl)
+  // Build the canonical URL from cfg.baseUrl (always the real domain, not localhost)
+  const canonicalUrl = `https://${cfg.baseUrl}/${slug}`
+  const encodedUrl = encodeURIComponent(canonicalUrl)
   const encodedTitle = encodeURIComponent(title)
 
   const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`
@@ -57,12 +58,13 @@ const ShareButtons: QuartzComponent = ({ fileData, cfg, displayClass }: QuartzCo
         </svg>
         X (Twitter)
       </a>
+      {/* data-canonical-url stores the real nikila.dev URL, script handles click */}
       <button
         class="share-btn share-copy"
-        data-url={pageUrl}
+        data-canonical-url={canonicalUrl}
         title="Copy link"
         aria-label="Copy link to clipboard"
-        onclick="(function(btn){var url=btn.getAttribute('data-url');navigator.clipboard.writeText(url).then(function(){var orig=btn.innerHTML;btn.innerHTML='<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'16\\' height=\\'16\\' viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'2\\'><polyline points=\\'20 6 9 17 4 12\\'></polyline></svg> Copied!';setTimeout(function(){btn.innerHTML=orig},2000)});})(this)"
+        id="share-copy-btn"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -148,6 +150,57 @@ ShareButtons.css = `
   border-color: var(--secondary);
   color: var(--light);
 }
+
+.share-copy.copied {
+  background-color: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--light);
+}
+`
+
+// This runs in the browser after the DOM is ready — clean, no inline escaping issues
+ShareButtons.afterDOMLoaded = `
+(function() {
+  function initShareCopyBtn() {
+    var btn = document.getElementById("share-copy-btn");
+    if (!btn) return;
+
+    btn.addEventListener("click", function() {
+      // Always use the canonical URL baked into the data attribute (nikila.dev, not localhost)
+      var url = btn.getAttribute("data-canonical-url");
+      if (!url) return;
+
+      navigator.clipboard.writeText(url).then(function() {
+        var originalHTML = btn.innerHTML;
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> Copied!';
+        btn.classList.add("copied");
+        setTimeout(function() {
+          btn.innerHTML = originalHTML;
+          btn.classList.remove("copied");
+        }, 2000);
+      }).catch(function() {
+        // Fallback for browsers that block clipboard without user gesture
+        var ta = document.createElement("textarea");
+        ta.value = url;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.focus();
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+        btn.textContent = "Copied!";
+        setTimeout(function() { btn.textContent = "Copy Link"; }, 2000);
+      });
+    });
+  }
+
+  // Run on initial page load
+  initShareCopyBtn();
+
+  // Re-run after SPA navigations (Quartz uses client-side routing)
+  document.addEventListener("nav", initShareCopyBtn);
+})();
 `
 
 export default (() => ShareButtons) satisfies QuartzComponentConstructor
