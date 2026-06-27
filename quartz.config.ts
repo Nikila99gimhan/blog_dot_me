@@ -18,7 +18,7 @@ const config: QuartzConfig = {
     baseUrl: "nikila.dev",
     ignorePatterns: ["private", "templates", ".obsidian", "drafts"],
     defaultDateType: "modified",
-    generateSocialImages: false,
+    generateSocialImages: true,
     theme: {
       fontOrigin: "googleFonts",
       cdnCaching: true,
