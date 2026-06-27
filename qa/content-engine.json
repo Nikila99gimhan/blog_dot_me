@@ -1,0 +1,458 @@
+{
+  "schema_version": "1.0",
+  "generated_at": "2026-06-27T03:30:00Z",
+  "generated_by": "QA Agent — Claude Sonnet 4.6 (Extended Thinking)",
+  "project_name": "blog_dot_me",
+  "project_purpose": "A personal developer and DevOps blog by Nikila Fernando, built on Quartz v4 (static site generator). Publishes technical long-form articles, TIL notes, tool writeups, and project case studies in the domains of DevOps, Kubernetes, CI/CD, and cloud infrastructure. Deployed at nikila.dev.",
+  "architecture_notes": {
+    "stack": "Quartz v4.5.2 (TypeScript SSG built on Preact, Unified/Remark/Rehype, esbuild, FlexSearch)",
+    "runtime": "Node >= 22, npm >= 10.9.2",
+    "build_command": "npx quartz build",
+    "dev_command": "npx quartz build --serve",
+    "dev_port": 8080,
+    "content_format": "Obsidian-flavored Markdown with YAML frontmatter",
+    "theme": {
+      "fonts": ["JetBrains Mono (header, body, code)"],
+      "light_mode_accent": "#2d6a4f",
+      "dark_mode_accent": "#39ff14",
+      "dark_mode_secondary_accent": "#00d4ff"
+    },
+    "plugins_enabled": [
+      "FrontMatter",
+      "CreatedModifiedDate",
+      "SyntaxHighlighting (One Dark Pro / Github Light)",
+      "ObsidianFlavoredMarkdown",
+      "GitHubFlavoredMarkdown",
+      "TableOfContents (collapseByDefault: false, minEntries: 2)",
+      "CrawlLinks (shortest resolution)",
+      "Description",
+      "Latex (KaTeX)",
+      "RemoveDrafts",
+      "AliasRedirects",
+      "ComponentResources",
+      "ContentPage",
+      "FolderPage",
+      "TagPage",
+      "ContentIndex (RSS + sitemap)",
+      "Assets",
+      "Static",
+      "NotFoundPage"
+    ],
+    "layout_components": {
+      "shared": ["Head", "Footer (GitHub, LinkedIn, RSS links)"],
+      "content_page_left": ["PageTitle", "MobileOnly(Spacer)", "Search", "Darkmode", "DesktopOnly(Explorer)"],
+      "content_page_before_body": ["Breadcrumbs", "ArticleTitle", "ContentMeta", "TagList"],
+      "content_page_right": ["DesktopOnly(TableOfContents)", "Backlinks"],
+      "list_page_left": ["PageTitle", "MobileOnly(Spacer)", "Search", "Darkmode", "DesktopOnly(Explorer)"],
+      "list_page_before_body": ["Breadcrumbs", "ArticleTitle", "ContentMeta"]
+    },
+    "base_url": "nikila.dev",
+    "analytics": "plausible",
+    "spa_routing": true,
+    "popovers_enabled": true
+  },
+  "environments": [
+    {
+      "name": "local-dev",
+      "url": "http://localhost:8080",
+      "qa_safe": true,
+      "notes": "Started via `npx quartz build --serve` in blog_dot_me/ directory"
+    },
+    {
+      "name": "production",
+      "url": "https://nikila.dev",
+      "qa_safe": false,
+      "notes": "Production — do NOT run automated QA traffic against this"
+    }
+  ],
+  "auth_method": {
+    "type": "none",
+    "notes": "Public static site, no authentication required"
+  },
+  "features": [
+    {
+      "id": "F-01",
+      "name": "Homepage / Landing Page",
+      "description": "The root index page (content/index.md) renders a terminal-aesthetic hero with a whoami block, a blog section table, and a recent posts list. Acts as the primary entry point for all visitors.",
+      "source": "content/index.md (lines 1-69) — agent-inferred (no SPEC.md or WALKTHROUGH.md)",
+      "acceptance_criteria": [
+        "[INFERRED] Page loads at http://localhost:8080/ with HTTP 200",
+        "[INFERRED] Page title contains '~/nikila.dev'",
+        "[INFERRED] Terminal ASCII art block is visible",
+        "[INFERRED] Blog section table is rendered with 5 rows (devops, til, tools, notes, projects)",
+        "[INFERRED] 'Recent Posts' section lists at least one post",
+        "[INFERRED] Footer contains GitHub, LinkedIn, and RSS links",
+        "[INFERRED] No JavaScript console errors on page load"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User navigates to http://localhost:8080/",
+        "[INFERRED] Page renders with terminal-style ASCII header",
+        "[INFERRED] User can see blog category table and recent posts",
+        "[INFERRED] User can click footer social links (GitHub, LinkedIn)"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "F-02",
+      "name": "Sidebar Explorer (File Navigator)",
+      "description": "Desktop sidebar showing the file/folder tree of the entire content directory, allowing users to navigate between sections. Rendered by Component.Explorer() — desktop-only.",
+      "source": "quartz.layout.ts (line 31) + docs/features/explorer.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Explorer panel is visible on desktop viewport (>= 1024px)",
+        "[INFERRED] Explorer panel is hidden on mobile viewport (< 768px)",
+        "[INFERRED] Content sections (devops, til, tools, notes, projects) appear as folders",
+        "[INFERRED] Clicking a folder expands/collapses it",
+        "[INFERRED] Clicking a file navigates to that page"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User opens any page on desktop",
+        "[INFERRED] Explorer panel visible in left sidebar",
+        "[INFERRED] User expands a folder (e.g., devops/)",
+        "[INFERRED] User clicks a post, navigates to it"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "F-03",
+      "name": "Full-Text Search",
+      "description": "FlexSearch-powered client-side full-text search across all published content. Triggered by clicking the Search component or pressing a keyboard shortcut.",
+      "source": "quartz.config.ts (FlexSearch dependency) + docs/features/full-text search.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Search input is visible in the left sidebar",
+        "[INFERRED] Clicking search input opens search modal/panel",
+        "[INFERRED] Typing 'kubernetes' returns at least one result",
+        "[INFERRED] Typing a nonsense string (e.g., 'zzzzzzz') shows 'No results' state",
+        "[INFERRED] Clicking a search result navigates to the correct page",
+        "[INFERRED] Search works without a server round-trip (client-side)"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User clicks Search component in left sidebar",
+        "[INFERRED] Search overlay/modal opens",
+        "[INFERRED] User types a query",
+        "[INFERRED] Results appear in real time",
+        "[INFERRED] User selects a result and is navigated to it"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "F-04",
+      "name": "Dark / Light Mode Toggle",
+      "description": "Theme toggle switching between light mode (cream/green palette) and dark mode (near-black/neon-green palette). Provided by Component.Darkmode() and persisted in localStorage.",
+      "source": "quartz.config.ts (colors block) + quartz.layout.ts (line 30) + docs/features/darkmode.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Dark mode toggle button is visible in the left sidebar",
+        "[INFERRED] Clicking toggle switches between dark and light themes",
+        "[INFERRED] Dark mode applies neon-green (#39ff14) accent on correct elements",
+        "[INFERRED] Light mode applies forest-green (#2d6a4f) accent on correct elements",
+        "[INFERRED] Preference is persisted — page reload keeps selected mode",
+        "[INFERRED] System preference is respected on first visit (prefers-color-scheme)"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User visits site for first time",
+        "[INFERRED] Default mode matches OS preference",
+        "[INFERRED] User clicks dark mode toggle",
+        "[INFERRED] Theme switches immediately",
+        "[INFERRED] User reloads page, same theme is retained"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "F-05",
+      "name": "Blog Post Rendering (Markdown → HTML)",
+      "description": "Core content rendering pipeline converting Obsidian-flavored Markdown to HTML. Includes GFM tables, callouts, code blocks, frontmatter extraction, and reading time metadata.",
+      "source": "quartz.config.ts (transformers) + content/devops/kubernetes-zero-to-prod.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Navigating to /devops/kubernetes-zero-to-prod renders the full article",
+        "[INFERRED] Article title 'Kubernetes: Zero to Prod' is shown as h1",
+        "[INFERRED] Date '2026-06-20' is displayed in ContentMeta",
+        "[INFERRED] Tags [kubernetes, devops, containers, k8s] are displayed",
+        "[INFERRED] Code blocks are rendered (not shown as raw text)",
+        "[INFERRED] YAML and bash code blocks are correctly identified",
+        "[INFERRED] GFM tables render with proper columns",
+        "[INFERRED] Callout blocks (> [!tip]) render with correct styling",
+        "[INFERRED] No broken layout or overflow issues"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User clicks a post from homepage recent posts list",
+        "[INFERRED] Post page loads with article title, date, tags",
+        "[INFERRED] User scrolls through — all sections render correctly",
+        "[INFERRED] Code blocks are syntax-highlighted"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "F-06",
+      "name": "Syntax Highlighting",
+      "description": "Shiki-based code block syntax highlighting. Dark mode uses 'One Dark Pro' theme; light mode uses 'Github Light'. Background is preserved (keepBackground: true).",
+      "source": "quartz.config.ts (Plugin.SyntaxHighlighting) — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Code blocks in posts have colored token highlights (not monochrome)",
+        "[INFERRED] In dark mode, 'One Dark Pro' color scheme is applied",
+        "[INFERRED] In light mode, 'Github Light' color scheme is applied",
+        "[INFERRED] Language badge (e.g., 'bash', 'yaml') is visible on code blocks",
+        "[INFERRED] Code block background is preserved in both themes"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User opens a post with code blocks (e.g., /devops/kubernetes-zero-to-prod)",
+        "[INFERRED] Code blocks display colored syntax tokens",
+        "[INFERRED] User toggles dark/light mode, syntax colors update accordingly"
+      ],
+      "priority": "P0"
+    },
+    {
+      "id": "F-07",
+      "name": "Table of Contents",
+      "description": "Auto-generated Table of Contents from markdown headings. Shown in the right sidebar on desktop content pages. collapseByDefault: false (expanded), minEntries: 2.",
+      "source": "quartz.config.ts (Plugin.TableOfContents) + quartz.layout.ts (line 34) + docs/features/table of contents.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] TOC panel is visible in right sidebar on desktop for posts with >= 2 headings",
+        "[INFERRED] TOC lists all headings from the article (h2 and h3)",
+        "[INFERRED] TOC is expanded by default (collapseByDefault: false)",
+        "[INFERRED] Clicking a TOC entry scrolls to the corresponding heading",
+        "[INFERRED] Active heading is highlighted as user scrolls",
+        "[INFERRED] TOC is NOT shown on pages with fewer than 2 headings"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User opens a long post",
+        "[INFERRED] TOC visible in right sidebar, expanded",
+        "[INFERRED] User clicks TOC entry, page scrolls to section",
+        "[INFERRED] Active section link in TOC updates on scroll"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "F-08",
+      "name": "Graph View",
+      "description": "Interactive D3-powered graph showing relationships between notes via wikilinks. Accessible as a panel or full-page view.",
+      "source": "docs/features/graph view.md + package.json (d3 dependency) — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Graph view toggle/button is visible on content pages",
+        "[INFERRED] Clicking opens graph view panel or full page",
+        "[INFERRED] Current page node is highlighted",
+        "[INFERRED] Linked notes (wikilinks) appear as connected nodes",
+        "[INFERRED] Graph is interactive (nodes are draggable or hoverable)",
+        "[INFERRED] No console errors when graph renders"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User opens a post with wikilinks",
+        "[INFERRED] Graph panel is visible",
+        "[INFERRED] Nodes and edges are rendered",
+        "[INFERRED] Hovering a node shows the note title",
+        "[INFERRED] Clicking a node navigates to that note"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "F-09",
+      "name": "Backlinks Panel",
+      "description": "Right-sidebar panel showing all other pages that link to the current page via wikilinks or markdown links.",
+      "source": "quartz.layout.ts (line 35) + docs/features/backlinks.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Backlinks section is visible in the right sidebar on desktop content pages",
+        "[INFERRED] Posts that are linked from other posts show those as backlinks",
+        "[INFERRED] Posts with no incoming links show empty or 'No backlinks' state",
+        "[INFERRED] Clicking a backlink navigates to the linking page"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User opens /devops/kubernetes-zero-to-prod (linked from github-actions post)",
+        "[INFERRED] Backlinks panel shows the github-actions post as a backlink",
+        "[INFERRED] User clicks backlink, navigates to it"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "F-10",
+      "name": "Tag Pages & Folder Listings",
+      "description": "Auto-generated pages for each tag and each folder, listing all posts with that tag or in that folder. Generated by Plugin.TagPage and Plugin.FolderPage.",
+      "source": "quartz.config.ts (Plugin.TagPage, Plugin.FolderPage) + content/devops posts (tags field) — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] /tags/kubernetes renders a page listing all posts tagged 'kubernetes'",
+        "[INFERRED] /devops renders the devops folder listing with all posts",
+        "[INFERRED] /tags/ renders a list of all tags",
+        "[INFERRED] Tag links in post pages navigate to the correct tag page",
+        "[INFERRED] Folder pages include article count and descriptions"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User reads a post, clicks a tag link",
+        "[INFERRED] Tag page renders with all posts for that tag",
+        "[INFERRED] User clicks a folder (e.g., devops) in the Explorer",
+        "[INFERRED] Folder listing page renders"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "F-11",
+      "name": "Popover Previews",
+      "description": "Hover popover that shows a preview of a linked page when hovering over an internal wikilink, without navigating away. Enabled via enablePopovers: true.",
+      "source": "quartz.config.ts (enablePopovers: true) + docs/features/popover previews.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Hovering over an internal wikilink shows a popover preview",
+        "[INFERRED] Popover contains the linked page's title and description",
+        "[INFERRED] Popover appears after a short hover delay (not instant)",
+        "[INFERRED] Popover disappears when mouse leaves the link",
+        "[INFERRED] External links do NOT show a popover",
+        "[INFERRED] No layout shift when popover appears"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User is reading a post with internal wikilinks",
+        "[INFERRED] User hovers over a wikilink",
+        "[INFERRED] Popover appears with preview of the linked note",
+        "[INFERRED] User moves mouse away, popover closes"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "F-12",
+      "name": "RSS Feed",
+      "description": "Machine-readable RSS/Atom feed at /index.xml containing all published posts, generated by Plugin.ContentIndex.",
+      "source": "quartz.config.ts (Plugin.ContentIndex enableRSS: true) + docs/features/RSS Feed.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] GET http://localhost:8080/index.xml returns HTTP 200",
+        "[INFERRED] Response Content-Type is application/xml or application/rss+xml",
+        "[INFERRED] Feed contains at least one <item> with <title>, <link>, <description>",
+        "[INFERRED] All published (non-draft) posts appear in the feed",
+        "[INFERRED] Feed is valid XML (no parse errors)"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] RSS reader or browser navigates to /index.xml",
+        "[INFERRED] Feed XML is returned and parseable",
+        "[INFERRED] Each post appears as an entry"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "F-13",
+      "name": "Breadcrumbs",
+      "description": "Navigation breadcrumb trail shown above article title on all content pages and list pages, showing the path from root to current page.",
+      "source": "quartz.layout.ts (lines 21, 41) + docs/features/breadcrumbs.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Breadcrumbs appear above article title on content pages",
+        "[INFERRED] Breadcrumbs show correct path hierarchy (e.g., Home > devops > Post Title)",
+        "[INFERRED] Breadcrumb links are clickable and navigate correctly",
+        "[INFERRED] Homepage does not show breadcrumbs (or shows only 'Home')"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User opens a post at /devops/kubernetes-zero-to-prod",
+        "[INFERRED] Breadcrumb trail 'Home > devops > Kubernetes: Zero to Prod' is visible",
+        "[INFERRED] User clicks 'devops' in breadcrumb, navigates to folder page"
+      ],
+      "priority": "P2"
+    },
+    {
+      "id": "F-14",
+      "name": "SPA Routing (Client-Side Navigation)",
+      "description": "Single-page application routing using micromorph that replaces page content without full reloads, enabling smooth transitions between pages. Enabled via enableSPA: true.",
+      "source": "quartz.config.ts (enableSPA: true) + package.json (micromorph dependency) + docs/features/SPA Routing.md — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Navigating between pages does NOT trigger a full browser reload",
+        "[INFERRED] Page URL updates correctly after SPA navigation",
+        "[INFERRED] Browser back/forward buttons work correctly after SPA navigation",
+        "[INFERRED] Page content updates without the entire page flashing white",
+        "[INFERRED] Left sidebar state (Explorer expansion) is preserved across SPA navigation"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User is on homepage, clicks a post link",
+        "[INFERRED] Page content transitions without full reload (no white flash)",
+        "[INFERRED] URL changes to the post's URL",
+        "[INFERRED] User presses browser back, returns to homepage"
+      ],
+      "priority": "P2"
+    },
+    {
+      "id": "F-15",
+      "name": "404 Not Found Page",
+      "description": "Custom 404 page rendered by Plugin.NotFoundPage for any URL that does not match a content page.",
+      "source": "quartz.config.ts (Plugin.NotFoundPage) — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] Navigating to a non-existent URL (e.g., /does-not-exist) shows a 404 page",
+        "[INFERRED] 404 page renders with site layout (not a bare browser error)",
+        "[INFERRED] 404 page contains a link back to homepage",
+        "[INFERRED] Page title or content indicates 'Not Found' or 404"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User enters a garbage URL in the browser",
+        "[INFERRED] Site renders a styled 404 page",
+        "[INFERRED] User clicks 'Back to home' or equivalent to recover"
+      ],
+      "priority": "P2"
+    },
+    {
+      "id": "F-16",
+      "name": "Wikilinks Resolution",
+      "description": "Obsidian-style [[wikilinks]] in markdown content are resolved to correct HTML anchor tags using 'shortest' resolution strategy (Plugin.CrawlLinks).",
+      "source": "quartz.config.ts (Plugin.CrawlLinks markdownLinkResolution: shortest) + content/devops/kubernetes-zero-to-prod.md (line 214) — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] [[devops/github-actions-reusable-workflows|CI/CD with GitHub Actions]] in kubernetes post renders as a clickable link",
+        "[INFERRED] Link text matches the alias text (not the raw filename)",
+        "[INFERRED] Clicking the wikilink navigates to the correct page",
+        "[INFERRED] Broken wikilinks (pointing to non-existent pages) are visually distinguished (e.g., grey color)"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User opens /devops/kubernetes-zero-to-prod",
+        "[INFERRED] 'CI/CD with GitHub Actions' appears as a hyperlink in 'What's Next?' section",
+        "[INFERRED] User clicks it, navigates to /devops/github-actions-reusable-workflows"
+      ],
+      "priority": "P1"
+    },
+    {
+      "id": "F-17",
+      "name": "Content Category Sections",
+      "description": "The blog is organized into 5 content sections: devops/, til/, tools/, notes/, projects/. Each section is accessible via folder pages and the sidebar explorer.",
+      "source": "content/index.md (lines 32-38) + actual content directories — agent-inferred",
+      "acceptance_criteria": [
+        "[INFERRED] /devops renders a folder listing page with devops posts",
+        "[INFERRED] /til renders a folder listing page with TIL posts",
+        "[INFERRED] /tools renders a folder listing page with tools posts",
+        "[INFERRED] /notes renders a folder listing page with notes posts",
+        "[INFERRED] /projects renders a folder listing page (may be empty or have one post)",
+        "[INFERRED] Each category page shows post titles and dates"
+      ],
+      "user_flow_steps": [
+        "[INFERRED] User clicks a category folder in the sidebar Explorer",
+        "[INFERRED] Folder page renders listing all posts in that section",
+        "[INFERRED] User clicks a post, navigates to it"
+      ],
+      "priority": "P0"
+    }
+  ],
+  "coverage_gaps": [
+    {
+      "gap_id": "GAP-01",
+      "severity": "high",
+      "description": "SPEC.md is missing entirely. All acceptance criteria in this Content Engine are agent-inferred from quartz.config.ts, quartz.layout.ts, and content files. No formal specification was available to validate against.",
+      "affected_features": "all"
+    },
+    {
+      "gap_id": "GAP-02",
+      "severity": "high",
+      "description": "WALKTHROUGH.md is missing entirely. All user_flow_steps are agent-inferred from page content and Quartz upstream documentation. No narrated walkthrough was available.",
+      "affected_features": "all"
+    },
+    {
+      "gap_id": "GAP-03",
+      "severity": "medium",
+      "description": "README.md present but is the upstream Quartz template README (jackyzha0/quartz), not a project-specific README for nikila.dev. Project purpose was inferred from quartz.config.ts and content/index.md instead.",
+      "affected_features": ["F-01", "F-17"]
+    },
+    {
+      "gap_id": "GAP-04",
+      "severity": "low",
+      "description": "Content sections til/, tools/, notes/ have very few posts (1-2 each). The projects/ section only has an index.md with no posts. Category page QA will have limited content to verify against.",
+      "affected_features": ["F-17", "F-10"]
+    },
+    {
+      "gap_id": "GAP-05",
+      "severity": "low",
+      "description": "Graph view feature (F-08) is available in standard Quartz but not explicitly configured in quartz.layout.ts. It may or may not appear depending on default Quartz component behavior. Verification needed at runtime.",
+      "affected_features": ["F-08"]
+    },
+    {
+      "gap_id": "GAP-06",
+      "severity": "low",
+      "description": "No test accounts or credential placeholders defined — not applicable for this project as it is a public read-only static site with no authentication.",
+      "affected_features": "none"
+    }
+  ],
+  "regression_baseline": null,
+  "last_qa_run": null
+}

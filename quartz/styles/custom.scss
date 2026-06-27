@@ -1,3 +1,579 @@
 @use "./base.scss";
 
-// put your custom CSS here!
+
+// ============================================================
+// TERMINAL / DEVOPS THEME — custom.scss
+// nikila.dev developer blog
+// ============================================================
+
+// ── CSS Custom Properties (terminal palette) ─────────────────
+:root {
+  --terminal-green: #39ff14;
+  --terminal-cyan: #00d4ff;
+  --terminal-amber: #ffb84d;
+  --terminal-red: #ff4757;
+  --terminal-bg: #0d0f14;
+  --terminal-bg-alt: #1a1d26;
+  --terminal-border: #2a2f40;
+  --terminal-dim: #3a3f52;
+  --terminal-prompt: #39ff14;
+  --terminal-cursor: #39ff14;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+}
+
+// ── Body & Base ───────────────────────────────────────────────
+body {
+  font-family: var(--font-mono) !important;
+  letter-spacing: 0.01em;
+}
+
+// Dark mode base overrides
+[saved-theme="dark"] body,
+[saved-theme="dark"] {
+  background-color: var(--terminal-bg);
+}
+
+// ── Scanline texture (subtle CRT effect) ─────────────────────
+[saved-theme="dark"] #quartz-body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  animation: scanlines 8s linear infinite;
+}
+
+@keyframes scanlines {
+  from { background-position: 0 0; }
+  to   { background-position: 0 100px; }
+}
+
+// ── Page Title (sidebar logo) — styled as shell prompt ────────
+.page-title {
+  font-family: var(--font-mono) !important;
+  font-weight: 700;
+  font-size: 1.05rem !important;
+  letter-spacing: 0.05em;
+
+  a {
+    text-decoration: none !important;
+    color: var(--terminal-green) !important;
+
+    &::before {
+      content: "";
+    }
+  }
+
+  // Blinking cursor after title
+  a::after {
+    content: "▋";
+    color: var(--terminal-green);
+    animation: blink 1.2s step-end infinite;
+    margin-left: 2px;
+    font-size: 0.9em;
+  }
+}
+
+[saved-theme="dark"] .page-title a {
+  color: var(--terminal-green) !important;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+// ── Article Title — prompt prefix ────────────────────────────
+.article-title {
+  font-family: var(--font-mono) !important;
+  font-weight: 700;
+  position: relative;
+
+  &::before {
+    content: "$ ";
+    color: var(--terminal-green);
+    font-weight: 400;
+    opacity: 0.85;
+  }
+}
+
+[saved-theme="dark"] .article-title {
+  color: #e2e8f0;
+
+  &::before {
+    color: var(--terminal-green);
+    text-shadow: 0 0 6px rgba(57, 255, 20, 0.6);
+  }
+}
+
+// ── Headings — hierarchical prompt prefixes ──────────────────
+[saved-theme="dark"] .center > article {
+  h1::before { content: "# "; color: var(--terminal-green); font-weight: 400; opacity: 0.8; }
+  h2::before { content: "## "; color: var(--terminal-cyan); font-weight: 400; opacity: 0.8; }
+  h3::before { content: "### "; color: var(--terminal-amber); font-weight: 400; opacity: 0.75; }
+  h4::before { content: "> "; color: var(--terminal-dim); font-weight: 400; opacity: 0.9; }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-mono) !important;
+    letter-spacing: 0.02em;
+  }
+
+  h2 {
+    border-bottom: 1px solid var(--terminal-border);
+    padding-bottom: 0.3rem;
+  }
+}
+
+// ── Code blocks ───────────────────────────────────────────────
+// Inline code
+code:not(pre code) {
+  font-family: var(--font-mono) !important;
+  font-size: 0.88em;
+  padding: 0.15em 0.45em;
+  border-radius: 3px;
+}
+
+[saved-theme="dark"] code:not(pre code) {
+  background-color: rgba(57, 255, 20, 0.08);
+  color: var(--terminal-green);
+  border: 1px solid rgba(57, 255, 20, 0.2);
+}
+
+// Fenced code blocks
+pre {
+  position: relative;
+  font-family: var(--font-mono) !important;
+  border-radius: 6px !important;
+  font-size: 0.87em !important;
+  line-height: 1.6 !important;
+  overflow-x: auto;
+}
+
+[saved-theme="dark"] pre {
+  background-color: #0a0c10 !important;
+  border: 1px solid var(--terminal-border) !important;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.05);
+}
+
+// Language label pill
+pre[data-language]::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 0.72em;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 1px 8px;
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+[saved-theme="dark"] pre[data-language]::before {
+  background: rgba(57, 255, 20, 0.1);
+  color: var(--terminal-green);
+  border: 1px solid rgba(57, 255, 20, 0.25);
+}
+
+// ── Copy button (injected via JS) ─────────────────────────────
+.copy-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  font-family: var(--font-mono);
+  font-size: 0.72em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid;
+  transition: all 0.2s ease;
+  z-index: 10;
+  user-select: none;
+
+  &::before {
+    content: "⎘ ";
+    font-size: 0.9em;
+  }
+}
+
+[saved-theme="dark"] .copy-button {
+  background: rgba(13, 15, 20, 0.9);
+  color: var(--terminal-green);
+  border-color: rgba(57, 255, 20, 0.3);
+  backdrop-filter: blur(4px);
+
+  &:hover {
+    background: rgba(57, 255, 20, 0.12);
+    border-color: var(--terminal-green);
+    box-shadow: 0 0 8px rgba(57, 255, 20, 0.3);
+  }
+
+  &.copied {
+    color: var(--terminal-cyan);
+    border-color: var(--terminal-cyan);
+    background: rgba(0, 212, 255, 0.08);
+    &::before { content: "✓ "; }
+  }
+}
+
+[saved-theme="light"] .copy-button {
+  background: rgba(255, 255, 255, 0.9);
+  color: #2d6a4f;
+  border-color: rgba(45, 106, 79, 0.3);
+
+  &:hover {
+    background: rgba(45, 106, 79, 0.08);
+    border-color: #2d6a4f;
+  }
+
+  &.copied {
+    color: #1a7431;
+    border-color: #1a7431;
+    &::before { content: "✓ "; }
+  }
+}
+
+// Position parent pre for the copy button
+pre {
+  position: relative;
+
+  // Push code right enough that copy button doesn't overlap language badge
+  code { display: block; padding-right: 60px; }
+}
+
+// ── Tags — bracket notation ───────────────────────────────────
+.tag-link, .tags a {
+  font-family: var(--font-mono) !important;
+  font-size: 0.8em !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+  text-decoration: none !important;
+  letter-spacing: 0.05em;
+  transition: all 0.15s ease;
+
+  &::before { content: "["; }
+  &::after  { content: "]"; }
+}
+
+[saved-theme="dark"] .tag-link,
+[saved-theme="dark"] .tags a {
+  background: rgba(57, 255, 20, 0.06) !important;
+  color: var(--terminal-green) !important;
+  border: 1px solid rgba(57, 255, 20, 0.2) !important;
+
+  &:hover {
+    background: rgba(57, 255, 20, 0.14) !important;
+    border-color: var(--terminal-green) !important;
+    box-shadow: 0 0 6px rgba(57, 255, 20, 0.25);
+  }
+}
+
+[saved-theme="light"] .tag-link,
+[saved-theme="light"] .tags a {
+  background: rgba(45, 106, 79, 0.06) !important;
+  color: #2d6a4f !important;
+  border: 1px solid rgba(45, 106, 79, 0.25) !important;
+}
+
+// ── Breadcrumbs — path-style ──────────────────────────────────
+nav.breadcrumb-container {
+  font-family: var(--font-mono) !important;
+  font-size: 0.82em !important;
+  opacity: 0.75;
+  margin-bottom: 0.5rem;
+
+  &::before {
+    content: "📂 ~/";
+    margin-right: 2px;
+  }
+
+  .breadcrumb-element span {
+    margin: 0 1px;
+    opacity: 0.7;
+  }
+}
+
+[saved-theme="dark"] nav.breadcrumb-container {
+  color: var(--terminal-dim) !important;
+  a { color: var(--terminal-cyan) !important; }
+}
+
+// ── Explorer (file tree) — tree-view prefixes ─────────────────
+.folder-outer > li {
+  position: relative;
+}
+
+[saved-theme="dark"] {
+  .explorer-content {
+    font-family: var(--font-mono) !important;
+    font-size: 0.87em !important;
+  }
+
+  button.folder-button {
+    color: var(--terminal-amber) !important;
+    font-weight: 600;
+    
+    &::before {
+      content: "▶ ";
+      font-size: 0.7em;
+      color: var(--terminal-dim);
+    }
+  }
+
+  button.folder-button.open::before { content: "▼ "; }
+
+  .folder-outer > li > a,
+  .folder-outer > li > .folder-outer > li > a {
+    color: var(--darkgray) !important;
+
+    &:hover { color: var(--terminal-green) !important; }
+  }
+}
+
+// ── Sidebar panels ───────────────────────────────────────────
+[saved-theme="dark"] {
+  .left, .right {
+    border-right: 1px solid var(--terminal-border);
+  }
+
+  .right { border-right: none; border-left: 1px solid var(--terminal-border); }
+}
+
+// ── Table of Contents ─────────────────────────────────────────
+[saved-theme="dark"] .toc {
+  font-family: var(--font-mono) !important;
+  font-size: 0.84em !important;
+  border-left: 2px solid var(--terminal-border);
+  padding-left: 1rem;
+
+  a {
+    color: var(--terminal-dim) !important;
+    text-decoration: none;
+    transition: color 0.15s ease;
+
+    &:hover { color: var(--terminal-cyan) !important; }
+  }
+
+  li.in-view > a { color: var(--terminal-cyan) !important; }
+}
+
+// ── Links ─────────────────────────────────────────────────────
+[saved-theme="dark"] article a {
+  color: var(--terminal-cyan) !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s ease, text-shadow 0.15s ease;
+
+  &:hover {
+    border-bottom-color: var(--terminal-cyan);
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+  }
+}
+
+// ── Content Meta (date / reading time) ───────────────────────
+.content-meta {
+  font-family: var(--font-mono) !important;
+  font-size: 0.8em !important;
+  opacity: 0.65;
+
+  &::before {
+    content: "# ";
+    opacity: 0.5;
+  }
+}
+
+// ── Search ────────────────────────────────────────────────────
+#search-bar {
+  font-family: var(--font-mono) !important;
+  font-size: 0.88em !important;
+  border-radius: 4px !important;
+}
+
+[saved-theme="dark"] #search-bar {
+  background: var(--terminal-bg-alt) !important;
+  border: 1px solid var(--terminal-border) !important;
+  color: #e2e8f0 !important;
+
+  &::placeholder { color: var(--terminal-dim) !important; }
+  &:focus {
+    border-color: var(--terminal-green) !important;
+    box-shadow: 0 0 0 2px rgba(57, 255, 20, 0.15) !important;
+    outline: none;
+  }
+}
+
+// ── Page list (index / folder views) ─────────────────────────
+[saved-theme="dark"] ul.section-ul {
+  li.section-li {
+    border-bottom: 1px solid var(--terminal-border);
+    padding: 0.75rem 0;
+
+    .section-entry-header {
+      font-family: var(--font-mono) !important;
+
+      &::before {
+        content: "→ ";
+        color: var(--terminal-green);
+        opacity: 0.8;
+      }
+
+      a { color: #e2e8f0 !important; }
+      a:hover { color: var(--terminal-green) !important; }
+    }
+
+    .meta { color: var(--terminal-dim) !important; font-size: 0.8em; }
+  }
+}
+
+// ── Blockquotes ───────────────────────────────────────────────
+[saved-theme="dark"] blockquote {
+  border-left: 3px solid var(--terminal-green) !important;
+  background: rgba(57, 255, 20, 0.04) !important;
+  padding: 0.8rem 1rem !important;
+  margin: 1rem 0 !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: var(--terminal-amber) !important;
+
+  &::before {
+    content: "// ";
+    color: var(--terminal-green);
+    opacity: 0.7;
+  }
+}
+
+// ── Tables ────────────────────────────────────────────────────
+[saved-theme="dark"] table {
+  border-collapse: collapse;
+  font-family: var(--font-mono) !important;
+  font-size: 0.88em;
+  width: 100%;
+
+  th {
+    background: var(--terminal-bg-alt);
+    color: var(--terminal-green);
+    border: 1px solid var(--terminal-border);
+    padding: 0.5rem 0.8rem;
+    text-align: left;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  td {
+    border: 1px solid var(--terminal-border);
+    padding: 0.45rem 0.8rem;
+    color: var(--darkgray);
+  }
+
+  tr:nth-child(even) td { background: rgba(255, 255, 255, 0.02); }
+  tr:hover td { background: rgba(57, 255, 20, 0.03); }
+}
+
+// ── Footer ────────────────────────────────────────────────────
+footer {
+  font-family: var(--font-mono) !important;
+  font-size: 0.8em !important;
+  border-top: 1px solid var(--terminal-border) !important;
+  opacity: 0.7;
+}
+
+[saved-theme="dark"] footer a {
+  color: var(--terminal-cyan) !important;
+  &:hover { color: var(--terminal-green) !important; }
+}
+
+// ── Callout boxes (Obsidian-style) ───────────────────────────
+[saved-theme="dark"] .callout {
+  border-radius: 4px !important;
+  border-left-width: 3px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.9em;
+
+  &[data-callout="note"]    { border-left-color: var(--terminal-cyan) !important; }
+  &[data-callout="warning"] { border-left-color: var(--terminal-amber) !important; }
+  &[data-callout="danger"]  { border-left-color: var(--terminal-red) !important; }
+  &[data-callout="tip"]     { border-left-color: var(--terminal-green) !important; }
+
+  .callout-title {
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 0.82em;
+  }
+}
+
+// ── Backlinks ─────────────────────────────────────────────────
+[saved-theme="dark"] .backlinks {
+  font-family: var(--font-mono) !important;
+  font-size: 0.85em;
+
+  h3 { color: var(--terminal-amber) !important; font-size: 0.88em; }
+
+  ul li a {
+    color: var(--terminal-cyan) !important;
+    &::before { content: "← "; opacity: 0.6; }
+  }
+}
+
+// ── Horizontal rules ─────────────────────────────────────────
+[saved-theme="dark"] hr {
+  border: none;
+  border-top: 1px solid var(--terminal-border);
+  margin: 2rem 0;
+  position: relative;
+
+  &::after {
+    content: "───────────────────";
+    position: absolute;
+    top: -0.6em;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--terminal-bg);
+    padding: 0 0.5rem;
+    color: var(--terminal-border);
+    font-size: 0.75em;
+    letter-spacing: 0.1em;
+  }
+}
+
+// ── Scrollbar styling (webkit) ────────────────────────────────
+[saved-theme="dark"] {
+  ::-webkit-scrollbar        { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track  { background: var(--terminal-bg); }
+  ::-webkit-scrollbar-thumb  { background: var(--terminal-border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--terminal-dim); }
+}
+
+// ── Selection highlight ───────────────────────────────────────
+[saved-theme="dark"] ::selection {
+  background: rgba(57, 255, 20, 0.2);
+  color: inherit;
+}
+
+// ── Smooth transitions ────────────────────────────────────────
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.1s ease;
+}
+
+// ── Mobile adjustments ────────────────────────────────────────
+@media (max-width: 800px) {
+  .article-title::before { content: "$ "; }
+  pre { font-size: 0.82em !important; }
+  .copy-button { display: none; } // inject only on desktop
+}
