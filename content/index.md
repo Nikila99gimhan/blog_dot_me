@@ -35,7 +35,7 @@ $ ls -la ~/blog
 | `til/` | 📁 dir | Today I Learned — quick notes |
 | `tools/` | 📁 dir | CLI tools, dotfiles, shell tricks |
 | `notes/` | 📁 dir | Long-form technical deep-dives |
-| `projects/` | 📁 dir | Project writeups & case studies |
+| `tech-talks/` | 📁 dir | Tech talks & university sessions |
 
 ---
 
