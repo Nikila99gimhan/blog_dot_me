@@ -28,10 +28,10 @@ Here's the full network topology:
 Just a standard markdown image — renders at full content-column width with the alt text as a caption below.
 
 ```markdown
-![Home lab network topology](images/homelab-topology.png)
+![Home lab network topology](./homelab-topology.png)
 ```
 
-![Home lab network topology — MacBook → Router → 3 K8s nodes + NAS](images/homelab-topology.png)
+![Home lab network topology — MacBook → Router → 3 K8s nodes + NAS](./homelab-topology.png)
 
 ---
 
@@ -40,10 +40,10 @@ Just a standard markdown image — renders at full content-column width with the
 Wrap in an HTML `<figure>` with no `<figcaption>` — or simply drop the alt text:
 
 ```markdown
-![](images/cicd-pipeline.png)
+![](./cicd-pipeline.png)
 ```
 
-![](images/cicd-pipeline.png)
+![](./cicd-pipeline.png)
 
 ---
 
@@ -53,7 +53,7 @@ Use an HTML `<div>` to center and size an image. Good for diagrams that don't ne
 
 ```html
 <div style="text-align: center; margin: 2rem 0;">
-  <img src="images/cicd-pipeline.png" 
+  <img src="./cicd-pipeline.png" 
        alt="CI/CD pipeline" 
        style="max-width: 700px; width: 100%; border-radius: 8px;" />
   <p style="font-size: 0.85em; opacity: 0.7; margin-top: 0.5rem;">
@@ -63,7 +63,7 @@ Use an HTML `<div>` to center and size an image. Good for diagrams that don't ne
 ```
 
 <div style="text-align: center; margin: 2rem 0;">
-  <img src="images/cicd-pipeline.png" alt="CI/CD pipeline" style="max-width: 700px; width: 100%; border-radius: 8px;" />
+  <img src="./cicd-pipeline.png" alt="CI/CD pipeline" style="max-width: 700px; width: 100%; border-radius: 8px;" />
   <p style="font-size: 0.85em; opacity: 0.7; margin-top: 0.5rem;">↑ The full CI/CD pipeline — from commit to production</p>
 </div>
 
@@ -74,12 +74,12 @@ Use an HTML `<div>` to center and size an image. Good for diagrams that don't ne
 Great for a screenshot or diagram that lives beside descriptive text. The text naturally wraps around the floated image.
 
 ```html
-<img src="images/homelab-topology.png" 
+<img src="./homelab-topology.png" 
      alt="Network topology" 
      style="float: right; margin: 0 0 1rem 2rem; width: 340px; border-radius: 8px;" />
 ```
 
-<img src="images/homelab-topology.png" alt="Network topology" style="float: right; margin: 0 0 1rem 2rem; width: 340px; border-radius: 8px;" />
+<img src="./homelab-topology.png" alt="Network topology" style="float: right; margin: 0 0 1rem 2rem; width: 340px; border-radius: 8px;" />
 
 **The hardware** I'm running:
 
@@ -99,12 +99,12 @@ The NAS provides NFS storage which is exposed in Kubernetes via a `StorageClass`
 ### 5. Float Left (text wraps left side)
 
 ```html
-<img src="images/workstation-terminal.png" 
+<img src="./workstation-terminal.png" 
      alt="Workstation terminal" 
      style="float: left; margin: 0 2rem 1rem 0; width: 340px; border-radius: 8px;" />
 ```
 
-<img src="images/workstation-terminal.png" alt="Workstation terminal" style="float: left; margin: 0 2rem 1rem 0; width: 340px; border-radius: 8px;" />
+<img src="./workstation-terminal.png" alt="Workstation terminal" style="float: left; margin: 0 2rem 1rem 0; width: 340px; border-radius: 8px;" />
 
 **My daily driver** is a MacBook Pro M3 Max, but all real work happens in tmux with this layout:
 
@@ -127,13 +127,13 @@ Use flexbox to place two images next to each other:
 ```html
 <div style="display: flex; gap: 1.5rem; margin: 2rem 0; align-items: flex-start;">
   <figure style="flex: 1; margin: 0;">
-    <img src="images/homelab-topology.png" style="width: 100%; border-radius: 8px;" />
+    <img src="./homelab-topology.png" style="width: 100%; border-radius: 8px;" />
     <figcaption style="text-align: center; font-size: 0.82em; opacity: 0.7; margin-top: 0.4rem;">
       Network topology
     </figcaption>
   </figure>
   <figure style="flex: 1; margin: 0;">
-    <img src="images/workstation-terminal.png" style="width: 100%; border-radius: 8px;" />
+    <img src="./workstation-terminal.png" style="width: 100%; border-radius: 8px;" />
     <figcaption style="text-align: center; font-size: 0.82em; opacity: 0.7; margin-top: 0.4rem;">
       Tmux workspace
     </figcaption>
@@ -143,11 +143,11 @@ Use flexbox to place two images next to each other:
 
 <div style="display: flex; gap: 1.5rem; margin: 2rem 0; align-items: flex-start;">
   <figure style="flex: 1; margin: 0;">
-    <img src="images/homelab-topology.png" style="width: 100%; border-radius: 8px;" />
+    <img src="./homelab-topology.png" style="width: 100%; border-radius: 8px;" />
     <figcaption style="text-align: center; font-size: 0.82em; opacity: 0.7; margin-top: 0.4rem;">Network topology</figcaption>
   </figure>
   <figure style="flex: 1; margin: 0;">
-    <img src="images/workstation-terminal.png" style="width: 100%; border-radius: 8px;" />
+    <img src="./workstation-terminal.png" style="width: 100%; border-radius: 8px;" />
     <figcaption style="text-align: center; font-size: 0.82em; opacity: 0.7; margin-top: 0.4rem;">Tmux workspace</figcaption>
   </figure>
 </div>
@@ -160,12 +160,12 @@ You can put an image inside an Obsidian-style callout:
 
 ```markdown
 > [!note] Architecture Overview
-> ![CI/CD pipeline diagram](images/cicd-pipeline.png)
+> ![CI/CD pipeline diagram](./cicd-pipeline.png)
 > The pipeline runs entirely in GitHub Actions — no self-hosted runners needed.
 ```
 
 > [!note] Architecture Overview
-> ![CI/CD pipeline diagram](images/cicd-pipeline.png)
+> ![CI/CD pipeline diagram](./cicd-pipeline.png)
 > The pipeline runs entirely in GitHub Actions — no self-hosted runners needed.
 
 ---
@@ -175,14 +175,14 @@ You can put an image inside an Obsidian-style callout:
 Add a subtle border and shadow for screenshots to make them stand out:
 
 ```html
-<img src="images/workstation-terminal.png" 
+<img src="./workstation-terminal.png" 
      alt="Terminal screenshot" 
      style="width: 100%; border-radius: 10px; 
             border: 1px solid rgba(57, 255, 20, 0.2); 
             box-shadow: 0 0 30px rgba(57, 255, 20, 0.08);" />
 ```
 
-<img src="images/workstation-terminal.png" alt="Terminal screenshot" style="width: 100%; border-radius: 10px; border: 1px solid rgba(57, 255, 20, 0.2); box-shadow: 0 0 30px rgba(57, 255, 20, 0.08);" />
+<img src="./workstation-terminal.png" alt="Terminal screenshot" style="width: 100%; border-radius: 10px; border: 1px solid rgba(57, 255, 20, 0.2); box-shadow: 0 0 30px rgba(57, 255, 20, 0.08);" />
 
 ---
 
@@ -191,13 +191,13 @@ Add a subtle border and shadow for screenshots to make them stand out:
 A tiny image that sits inline with text — useful for logos or icons:
 
 ```html
-This runs on <img src="images/homelab-topology.png" 
+This runs on <img src="./homelab-topology.png" 
   style="height: 1.4em; vertical-align: middle; border-radius: 3px;" 
   alt="homelab" /> 
 bare metal Kubernetes.
 ```
 
-This diagram <img src="images/homelab-topology.png" style="height: 2.5em; vertical-align: middle; border-radius: 3px;" alt="homelab" /> represents my home lab setup in full.
+This diagram <img src="./homelab-topology.png" style="height: 2.5em; vertical-align: middle; border-radius: 3px;" alt="homelab" /> represents my home lab setup in full.
 
 ---
 
@@ -205,8 +205,8 @@ This diagram <img src="images/homelab-topology.png" style="height: 2.5em; vertic
 
 | Layout | Markdown/HTML | Best for |
 |---|---|---|
-| Full width | `![caption](images/file.png)` | Hero images, diagrams |
-| No caption | `![](images/file.png)` | Clean visuals |
+| Full width | `![caption](./file.png)` | Hero images, diagrams |
+| No caption | `![](./file.png)` | Clean visuals |
 | Centered + sized | `<div style="text-align:center"><img width="N">` | Diagrams |
 | Float right | `<img style="float:right; width:Npx">` | Screenshot beside text |
 | Float left | `<img style="float:left; width:Npx">` | Screenshot beside text |

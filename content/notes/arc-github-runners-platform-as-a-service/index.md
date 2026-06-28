@@ -3,7 +3,7 @@ title: "ARC GitHub Runners as a Platform Service"
 date: 2026-06-27
 tags: [github-actions, kubernetes, arc, eks, devops, platform-engineering, security, irsa]
 description: "A production blueprint for running GitHub Actions self-hosted runners as a centralized platform service on Amazon EKS — ephemeral pods, IRSA two-hop trust, multi-tenant namespaces, and zero long-lived credentials."
-image: "https://nikila.dev/images/arc-pull-model.png"
+image: "https://nikila.dev/notes/arc-github-runners-platform-as-a-service/arc-pull-model.png"
 draft: false
 ---
 
@@ -47,7 +47,7 @@ Strip away all the YAML and infrastructure-as-code, and the platform rests on th
 
 The key architectural insight in ARC is that GitHub never pushes into your infrastructure — your infrastructure pulls from GitHub. This is the opposite of a webhook model, and the security implications are significant.
 
-![ARC pull-based architecture — the Listener Pod long-polls GitHub outbound. No inbound firewall rules required.](images/arc-pull-model.png)
+![ARC pull-based architecture — the Listener Pod long-polls GitHub outbound. No inbound firewall rules required.](./arc-pull-model.png)
 
 Here's the flow step by step:
 
@@ -149,7 +149,7 @@ template:
 The part of this architecture that trips people up most often is AWS access — specifically, how a Kubernetes pod ends up with permission to deploy infrastructure into a completely separate AWS account.
 
 <div style="text-align: center; margin: 2rem 0;">
-  <img src="images/irsa-two-hop.png" alt="IRSA two-hop trust chain — K8s OIDC token → Jump Role (platform account) → Provisioner Role (team account)" style="max-width: 720px; width: 100%; border-radius: 8px;" />
+  <img src="./irsa-two-hop.png" alt="IRSA two-hop trust chain — K8s OIDC token → Jump Role (platform account) → Provisioner Role (team account)" style="max-width: 720px; width: 100%; border-radius: 8px;" />
   <p style="font-size: 0.82em; opacity: 0.7; margin-top: 0.5rem;">The two-hop chain keeps the blast radius of any single credential compromise contained to one team's account — never the whole org.</p>
 </div>
 
@@ -329,7 +329,7 @@ DinD isn't forbidden. But it must be a deliberate, reviewed exception — never 
 
   </div>
   <div style="flex: 1;">
-    <img src="images/dind-node-segregation.png" alt="DinD node group is tainted and segregated from standard runners" style="width: 100%; border-radius: 8px;" />
+    <img src="./dind-node-segregation.png" alt="DinD node group is tainted and segregated from standard runners" style="width: 100%; border-radius: 8px;" />
   </div>
 </div>
 
@@ -391,7 +391,7 @@ template:
 
 A platform serving multiple teams is only as good as its isolation between those teams.
 
-![Multi-tenant runner isolation — each team gets a dedicated namespace with its own network policies, resource quotas, secrets, and runner group](images/multitenant-namespaces.png)
+![Multi-tenant runner isolation — each team gets a dedicated namespace with its own network policies, resource quotas, secrets, and runner group](./multitenant-namespaces.png)
 
 Each consuming team gets a dedicated namespace. That namespace is the complete boundary for everything related to that team's runners.
 
