@@ -45,6 +45,8 @@ export const defaultListPageLayout: PageLayout = {
     Component.Breadcrumbs(),
     Component.ArticleTitle(),
     Component.ContentMeta(),
+    Component.TagList(),
+    Component.ShareButtons(),
   ],
   left: [
     Component.PageTitle(),
@@ -55,5 +57,8 @@ export const defaultListPageLayout: PageLayout = {
       folderClickBehavior: "link",
     }),
   ],
-  right: [],
+  right: [
+    Component.DesktopOnly(Component.TableOfContents()),
+    Component.Backlinks(),
+  ],
 }
