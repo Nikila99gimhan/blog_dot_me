@@ -36,6 +36,7 @@ $ ls -la ~/blog
 | `tools/` | 📁 dir | CLI tools, dotfiles, shell tricks |
 | `notes/` | 📁 dir | Long-form technical deep-dives |
 | `tech-talks/` | 📁 dir | Tech talks & university sessions |
+| `communities/` | 📁 dir | Open source & developer communities |
 
 ---
 
