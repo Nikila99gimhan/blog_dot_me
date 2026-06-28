@@ -17,7 +17,7 @@ draft: false
 ```bash
 $ whoami
 > nikila fernando
-> engineer · devops practitioner · open-source tinkerer
+> platform engineer · devops advocate · open-source tinkerer
 
 $ cat /etc/motd
 > building things in the cloud, breaking them in staging,

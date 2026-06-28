@@ -61,6 +61,8 @@ export default (() => {
         <meta name="twitter:description" content={description} />
         <meta property="og:description" content={description} />
         <meta property="og:image:alt" content={description} />
+        <meta name="keywords" content="Nikila Fernando, DevOps platform engineer, DevOps advocate, platform engineering, platform DevOps engineer" />
+        <meta name="author" content="Nikila Fernando" />
 
         {!usesCustomOgImage && (
           <>

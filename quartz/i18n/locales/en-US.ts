@@ -3,7 +3,7 @@ import { Translation } from "./definition"
 export default {
   propertyDefaults: {
     title: "Untitled",
-    description: "No description provided",
+    description: "Nikila Fernando — DevOps Platform Engineer and DevOps Advocate. Insights on platform engineering, CI/CD, cloud native, and developer experience.",
   },
   components: {
     callout: {
