@@ -1,0 +1,42 @@
+.commit-grid-container {
+  width: 100%;
+  overflow-x: auto; /* allows scrolling on very narrow screens */
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+  scrollbar-width: none; /* hide scrollbar on firefox */
+}
+
+.commit-grid-container::-webkit-scrollbar {
+  display: none; /* hide scrollbar on webkit */
+}
+
+.commit-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 12px);
+  grid-template-columns: repeat(50, 12px);
+  gap: 3px;
+  width: max-content;
+}
+
+.commit-cell {
+  width: 12px;
+  height: 12px;
+  background-color: var(--lightgray);
+  border-radius: 2px;
+  transition: background-color 0.8s ease-out; /* slow fade out back to gray */
+}
+
+/* Base Red Colors for the active states */
+.commit-cell.active-1 { background-color: #ff9999; transition: none; }
+.commit-cell.active-2 { background-color: #ff4d4d; transition: none; }
+.commit-cell.active-3 { background-color: #cc0000; transition: none; }
+.commit-cell.active-4 { background-color: #800000; transition: none; }
+
+/* Dark mode palette adjustments */
+[saved-theme="dark"] .commit-cell {
+  background-color: var(--darkgray);
+}
+[saved-theme="dark"] .commit-cell.active-1 { background-color: #5c1616; transition: none; }
+[saved-theme="dark"] .commit-cell.active-2 { background-color: #991f1f; transition: none; }
+[saved-theme="dark"] .commit-cell.active-3 { background-color: #cc2929; transition: none; }
+[saved-theme="dark"] .commit-cell.active-4 { background-color: #ff3333; transition: none; }

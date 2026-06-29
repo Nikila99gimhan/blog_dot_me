@@ -3,16 +3,6 @@ title: "~/nikila.dev"
 draft: false
 ---
 
-<div class="terminal-boot">
-
-```
-╔══════════════════════════════════════════════════════════╗
-║            nikila.dev — developer & devops blog          ║
-║                  Quartz 4.0 // static site               ║
-╚══════════════════════════════════════════════════════════╝
-```
-
-</div>
 
 ```bash
 $ whoami

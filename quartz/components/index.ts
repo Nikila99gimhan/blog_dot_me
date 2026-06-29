@@ -24,6 +24,7 @@ import Comments from "./Comments"
 import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
 import ShareButtons from "./ShareButtons"
+import CommitGrid from "./CommitGrid"
 
 export {
   ArticleTitle,
@@ -52,4 +53,5 @@ export {
   Flex,
   ConditionalRender,
   ShareButtons,
+  CommitGrid,
 }
