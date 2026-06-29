@@ -40,19 +40,7 @@ $ ls -la ~/blog
 
 ---
 
-```bash
-$ cat recent_posts.log
-```
 
-## Recent Posts
-
-- [[devops/kubernetes-zero-to-prod|Kubernetes: Zero to Prod]] — `2026-06-20`
-- [[devops/github-actions-reusable-workflows|GitHub Actions Reusable Workflows]] — `2026-06-15`
-- [[til/git-worktrees|TIL: Git Worktrees are Underrated]] — `2026-06-10`
-- [[tools/dotfiles-setup|My Dotfiles Setup with GNU Stow]] — `2026-06-05`
-- [[notes/docker-networking-deep-dive|Docker Networking Deep Dive]] — `2026-05-28`
-
----
 
 ```bash
 $ cat contact.txt

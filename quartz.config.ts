@@ -90,6 +90,8 @@ const config: QuartzConfig = {
       Plugin.Static(),
       Plugin.NotFoundPage(),
       Plugin.CustomOgImages(),
+      Plugin.CNAME(),
+      Plugin.Favicon(),
     ],
   },
 }

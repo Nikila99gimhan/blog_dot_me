@@ -29,12 +29,15 @@ export const defaultContentPageLayout: PageLayout = {
     Component.MobileOnly(Component.Spacer()),
     Component.Search(),
     Component.Darkmode(),
+    Component.ReaderMode(),
     Component.Explorer({
       folderClickBehavior: "link",
     }),
   ],
   right: [
+    Component.Graph(),
     Component.DesktopOnly(Component.TableOfContents()),
+    Component.RecentNotes({ limit: 4 }),
     Component.Backlinks(),
   ],
 }
@@ -53,12 +56,15 @@ export const defaultListPageLayout: PageLayout = {
     Component.MobileOnly(Component.Spacer()),
     Component.Search(),
     Component.Darkmode(),
+    Component.ReaderMode(),
     Component.Explorer({
       folderClickBehavior: "link",
     }),
   ],
   right: [
+    Component.Graph(),
     Component.DesktopOnly(Component.TableOfContents()),
+    Component.RecentNotes({ limit: 4 }),
     Component.Backlinks(),
   ],
 }
