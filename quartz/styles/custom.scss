@@ -590,3 +590,45 @@ footer {
   pre { font-size: 0.82em !important; }
   .copy-button { display: none; } // inject only on desktop
 }
+
+// ── md-studio: Image wrap layout ─────────────────────
+.img-wrap {
+  margin: 0.5rem 0;
+
+  img {
+    width: 100%;
+    border-radius: 5px;
+  }
+}
+
+.img-wrap-left {
+  float: left;
+  margin-right: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.img-wrap-right {
+  float: right;
+  margin-left: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.img-wrap-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.clear {
+  clear: both;
+}
+
+@media (max-width: 600px) {
+  .img-wrap-left,
+  .img-wrap-right {
+    float: none;
+    width: 100% !important;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
