@@ -88,19 +88,6 @@ export default (() => {
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />
 
-        {/* ── LOCKDOWN MODE (temporary) ───────────────────────────────────────
-            Redirect every page except the AGC article back to itself.
-            Remove this block (and quartz/static/lockdown.js) when the blog
-            content is ready to go public.
-        ── */}
-        {fileData.slug !== "devops/azure-application-gateway-for-containers/index" && (
-          <meta
-            httpEquiv="refresh"
-            content="0; url=/devops/azure-application-gateway-for-containers/"
-          />
-        )}
-        <script src={`${baseDir}/static/lockdown.js`} defer />
-
         {css.map((resource) => CSSResourceToStyleElement(resource, true))}
         {js
           .filter((resource) => resource.loadTime === "beforeDOMReady")
