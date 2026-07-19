@@ -88,6 +88,13 @@ export default (() => {
         <meta name="description" content={description} />
         <meta name="generator" content="Quartz" />
 
+        {/* Root redirect → AGC article (TEMPORARY — remove when blog is ready) */}
+        {fileData.slug === "index" && (
+          <meta httpEquiv="refresh" content="0; url=/devops/azure-application-gateway-for-containers/" />
+        )}
+        {/* Lockdown: silently blocks link clicks on the article page only */}
+        <script src={`${baseDir}/static/lockdown.js`} defer />
+
         {css.map((resource) => CSSResourceToStyleElement(resource, true))}
         {js
           .filter((resource) => resource.loadTime === "beforeDOMReady")
