@@ -30,6 +30,8 @@ payments-api
 
 Each has its own Kubernetes `Service`:
 
+![Kubernetes Service types at a glance — ClusterIP, NodePort, LoadBalancer, and Ingress/Gateway](./k8s-service-types.png)
+
 ```text
 frontend-service
 orders-service
@@ -44,6 +46,8 @@ A Kubernetes Service makes a changing collection of pods available through a sta
 | `NodePort` | Exposes the Service through a port on every node |
 | `LoadBalancer` | Requests an external or internal cloud load balancer |
 | `ExternalName` | Maps the Service to an external DNS name |
+
+![AKS Service types compared — how ClusterIP, NodePort, LoadBalancer and Ingress/Gateway each expose workloads](./service-types-overview.png)
 
 `ClusterIP` is the normal choice for internal microservice communication. But if real users or external systems need access, we need an entry point into the cluster.
 
@@ -77,7 +81,11 @@ X-Release: beta
 ?region=asia
 ```
 
-Those details live at Layer 7, where HTTP and HTTPS operate. A Layer 7 gateway makes much smarter decisions:
+Those details live at Layer 7, where HTTP and HTTPS operate.
+
+![Layer 4 routes by IP and port to a single target; Layer 7 inspects Host, Path, and Header to route to different services](./layer4-vs-layer7.png)
+
+A Layer 7 gateway makes much smarter decisions:
 
 ```text
 shop.example.com/            → frontend-service
@@ -183,6 +191,8 @@ flowchart TD
 
 There are two separate paths here.
 
+![AGC architecture — traffic flows Client → AGC → Pods (solid), while Gateway API → ALB Controller → AGC is the configuration path (dashed)](./agc-architecture.png)
+
 ### The control path
 
 Manages configuration—never touches application traffic:
@@ -272,6 +282,8 @@ flowchart TD
 - `Service` — represents the backend application
 
 For example, an `HTTPRoute` could express:
+
+![HTTPRoute weighted traffic split — 80% to Version 1, 20% to Version 2 for canary releases](./httproute-weighted-split.png)
 
 ```text
 /orders                 → orders-v1
