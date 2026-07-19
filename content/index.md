@@ -36,8 +36,8 @@ $ ls -la ~/blog
 $ cat contact.txt
 ```
 
-> **GitHub** → [github.com/nikilafernando](https://github.com/nikilafernando)  
-> **LinkedIn** → [linkedin.com/in/nikilafernando](https://linkedin.com/in/nikilafernando)  
+> **GitHub** → [github.com/Nikila99gimhan](https://github.com/Nikila99gimhan)  
+> **LinkedIn** → [linkedin.com/in/nikilafernando](https://www.linkedin.com/in/nikilafernando/)  
 > **RSS** → [/index.xml](/index.xml)
 
 ```bash
