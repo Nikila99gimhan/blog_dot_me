@@ -292,11 +292,11 @@ kubelet server cert = API server -> kubelet
 These mostly act as **clients** to the API server.
 
 | Component | Credential | Purpose |
-|---|---|
+|---|---|---|
 | admin / kubectl | `admin.conf` | Administrative access to the API server |
 | kube-scheduler | `scheduler.conf` | Scheduler communicates with the API server |
 | kube-controller-manager | `controller-manager.conf` | Controller manager communicates with the API server |
-| kube-proxy | kube-proxy kubeconfig / cert | Watches cluster state through the API server |
+| kube-proxy | `kube-proxy.conf` | Watches cluster state through the API server |
 
 > [!tip]
 > Scheduler and controller manager do **not** normally talk directly to etcd.  
