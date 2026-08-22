@@ -427,5 +427,4 @@ Now the platform knows how the right traffic reaches the right one.
 
 ## Related Posts
 
-- [[devops/kubernetes-zero-to-prod|Kubernetes: Zero to Prod]]
-- [[devops/github-actions-reusable-workflows|GitHub Actions Reusable Workflows]]
+- [[devops/kubernetes-tls-certificate-management|Kubernetes TLS Certificate Management: How Cluster Certificates Work]]
