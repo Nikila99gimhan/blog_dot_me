@@ -1,19 +1,18 @@
 {
-  "name": "@jackyzha0/quartz",
-  "description": "🌱 publish your digital garden and notes as a website",
+  "name": "blog_dot_me",
+  "description": "nikila.dev - DevOps, Platform Engineering & Cloud Architecture Blog",
   "private": true,
-  "version": "4.5.2",
+  "version": "0.1.0",
   "type": "module",
-  "author": "jackyzha0 <j.zhao2k19@gmail.com>",
+  "author": "Nikila Fernando",
   "license": "MIT",
-  "homepage": "https://quartz.jzhao.xyz",
+  "homepage": "https://nikila.dev",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jackyzha0/quartz.git"
+    "url": "https://github.com/Nikila99gimhan/blog_dot_me.git"
   },
   "scripts": {
     "quartz": "./quartz/bootstrap-cli.mjs",
-    "docs": "npx quartz build --serve -d docs",
     "check": "tsc --noEmit && npx prettier . --check",
     "format": "npx prettier . --write",
     "test": "tsx --test",
