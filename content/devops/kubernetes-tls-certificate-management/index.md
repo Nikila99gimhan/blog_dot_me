@@ -604,4 +604,5 @@ If you can answer those three things for a connection path, most Kubernetes TLS 
 
 ## Related Posts
 
+- [[devops/kubernetes-v1-37-sneak-peek|Kubernetes v1.37 Sneak Peek: What Platform Engineers Should Actually Care About]]
 - [[devops/azure-application-gateway-for-containers|Azure Application Gateway for Containers]]

@@ -427,4 +427,5 @@ Now the platform knows how the right traffic reaches the right one.
 
 ## Related Posts
 
+- [[devops/kubernetes-v1-37-sneak-peek|Kubernetes v1.37 Sneak Peek: What Platform Engineers Should Actually Care About]]
 - [[devops/kubernetes-tls-certificate-management|Kubernetes TLS Certificate Management: How Cluster Certificates Work]]
