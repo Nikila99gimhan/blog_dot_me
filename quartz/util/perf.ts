@@ -1,8 +1,7 @@
-import pretty from "pretty-time"
 import { styleText } from "util"
 
 export class PerfTimer {
-  evts: { [key: string]: [number, number] }
+  evts: { [key: string]: number }
 
   constructor() {
     this.evts = {}
@@ -10,10 +9,15 @@ export class PerfTimer {
   }
 
   addEvent(evtName: string) {
-    this.evts[evtName] = process.hrtime()
+    this.evts[evtName] = performance.now()
   }
 
   timeSince(evtName?: string): string {
-    return styleText("yellow", pretty(process.hrtime(this.evts[evtName ?? "start"])))
+    const elapsed = performance.now() - (this.evts[evtName ?? "start"] ?? performance.now())
+    const formatted =
+      elapsed >= 1000
+        ? `${(elapsed / 1000).toFixed(elapsed >= 10000 ? 0 : 2)}s`
+        : `${Math.round(elapsed)}ms`
+    return styleText("yellow", formatted)
   }
 }

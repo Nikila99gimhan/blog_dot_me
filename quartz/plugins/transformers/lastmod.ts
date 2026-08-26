@@ -1,7 +1,6 @@
 import fs from "fs"
-import { Repository } from "@napi-rs/simple-git"
+import { execSync } from "child_process"
 import { QuartzTransformerPlugin } from "../types"
-import path from "path"
 import { styleText } from "util"
 
 export interface Options {
@@ -42,25 +41,9 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
   const opts = { ...defaultOptions, ...userOpts }
   return {
     name: "CreatedModifiedDate",
-    markdownPlugins(ctx) {
+    markdownPlugins() {
       return [
         () => {
-          let repo: Repository | undefined = undefined
-          let repositoryWorkdir: string
-          if (opts.priority.includes("git")) {
-            try {
-              repo = Repository.discover(ctx.argv.directory)
-              repositoryWorkdir = repo.workdir() ?? ctx.argv.directory
-            } catch (e) {
-              console.log(
-                styleText(
-                  "yellow",
-                  `\nWarning: couldn't find git repository for ${ctx.argv.directory}`,
-                ),
-              )
-            }
-          }
-
           return async (_tree, file) => {
             let created: MaybeDate = undefined
             let modified: MaybeDate = undefined
@@ -77,17 +60,17 @@ export const CreatedModifiedDate: QuartzTransformerPlugin<Partial<Options>> = (u
                 created ||= file.data.frontmatter.created as MaybeDate
                 modified ||= file.data.frontmatter.modified as MaybeDate
                 published ||= file.data.frontmatter.published as MaybeDate
-              } else if (source === "git" && repo) {
+              } else if (source === "git") {
                 try {
-                  const relativePath = path.relative(repositoryWorkdir, fullFp)
-                  modified ||= await repo.getFileLatestModifiedDateAsync(relativePath)
+                  const stdout = execSync(`git log -1 --format=%ct "${fullFp}"`, {
+                    encoding: "utf8",
+                    stdio: ["pipe", "pipe", "ignore"],
+                  }).trim()
+                  if (stdout) {
+                    modified ||= Number(stdout) * 1000
+                  }
                 } catch {
-                  console.log(
-                    styleText(
-                      "yellow",
-                      `\nWarning: ${file.data.filePath!} isn't yet tracked by git, dates will be inaccurate`,
-                    ),
-                  )
+                  // untracked or outside git
                 }
               }
             }

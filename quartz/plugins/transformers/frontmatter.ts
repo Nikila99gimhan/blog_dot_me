@@ -2,14 +2,13 @@ import matter from "gray-matter"
 import remarkFrontmatter from "remark-frontmatter"
 import { QuartzTransformerPlugin } from "../types"
 import yaml from "js-yaml"
-import toml from "toml"
 import { FilePath, FullSlug, getFileExtension, slugifyFilePath, slugTag } from "../../util/path"
 import { QuartzPluginData } from "../vfile"
 import { i18n } from "../../i18n"
 
 export interface Options {
   delimiters: string | [string, string]
-  language: "yaml" | "toml"
+  language: "yaml"
 }
 
 const defaultOptions: Options = {
@@ -59,7 +58,7 @@ export const FrontMatter: QuartzTransformerPlugin<Partial<Options>> = (userOpts)
     markdownPlugins(ctx) {
       const { cfg, allSlugs } = ctx
       return [
-        [remarkFrontmatter, ["yaml", "toml"]],
+        [remarkFrontmatter, ["yaml"]],
         () => {
           return (_, file) => {
             const fileData = Buffer.from(file.value as Uint8Array)
@@ -67,7 +66,6 @@ export const FrontMatter: QuartzTransformerPlugin<Partial<Options>> = (userOpts)
               ...opts,
               engines: {
                 yaml: (s) => yaml.load(s, { schema: yaml.JSON_SCHEMA }) as object,
-                toml: (s) => toml.parse(s) as object,
               },
             })
 

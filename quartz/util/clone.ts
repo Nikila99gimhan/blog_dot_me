@@ -1,3 +1,1 @@
-import rfdc from "rfdc"
-
-export const clone = rfdc()
+export const clone = <T>(obj: T): T => structuredClone(obj)

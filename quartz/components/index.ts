@@ -20,8 +20,6 @@ import DesktopOnly from "./DesktopOnly"
 import MobileOnly from "./MobileOnly"
 import RecentNotes from "./RecentNotes"
 import Breadcrumbs from "./Breadcrumbs"
-import Comments from "./Comments"
-import Flex from "./Flex"
 import ConditionalRender from "./ConditionalRender"
 import ShareButtons from "./ShareButtons"
 import CommitGrid from "./CommitGrid"
@@ -49,8 +47,6 @@ export {
   RecentNotes,
   NotFound,
   Breadcrumbs,
-  Comments,
-  Flex,
   ConditionalRender,
   ShareButtons,
   CommitGrid,

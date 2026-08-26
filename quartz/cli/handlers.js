@@ -7,8 +7,14 @@ import fs from "fs"
 import { intro, outro, select, text } from "@clack/prompts"
 import { rm } from "fs/promises"
 import chokidar from "chokidar"
-import prettyBytes from "pretty-bytes"
 import { execSync, spawnSync } from "child_process"
+
+function formatBytes(bytes) {
+  if (!bytes || bytes < 1024) return `${bytes ?? 0} B`
+  const kb = bytes / 1024
+  if (kb < 1024) return `${kb.toFixed(1)} KB`
+  return `${(kb / 1024).toFixed(1)} MB`
+}
 import http from "http"
 import serveHandler from "serve-handler"
 import { WebSocketServer } from "ws"
@@ -327,7 +333,7 @@ export async function handleBuild(argv) {
       const outputFileName = "quartz/.quartz-cache/transpiled-build.mjs"
       const meta = result.metafile.outputs[outputFileName]
       console.log(
-        `Successfully transpiled ${Object.keys(meta.inputs).length} files (${prettyBytes(
+        `Successfully transpiled ${Object.keys(meta.inputs).length} files (${formatBytes(
           meta.bytes,
         )})`,
       )
