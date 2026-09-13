@@ -1,34 +1,45 @@
 const API_URL = "https://nikila-pv-func-prod-stttwu.azurewebsites.net/views"
-const TIMEOUT_MS = 3500
+const TIMEOUT_MS = 8000
 
+let activePath: string | null = null
+let activeController: AbortController | null = null
 let currentGeneration = 0
-let activeAbortController: AbortController | null = null
 
 async function updatePageviewBadge() {
-  const generation = ++currentGeneration
-
-  // Cancel in-flight request from previous navigation
-  if (activeAbortController) {
-    activeAbortController.abort()
-    activeAbortController = null
-  }
-
   const badge = document.querySelector("[data-pageview-badge]") as HTMLElement | null
   if (!badge) {
+    if (activeController) {
+      activeController.abort()
+      activeController = null
+      activePath = null
+    }
     return
   }
-
-  const countElement = badge.querySelector("[data-pageview-count]") as HTMLElement | null
-
-  // Setup abort controller for timeout and rapid navigation cancellation
-  const controller = new AbortController()
-  activeAbortController = controller
-  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
 
   const currentPath =
     badge.getAttribute("data-canonical-path") ||
     window.location.pathname.replace(/(\/index)?(\.html)?\/?$/, "") ||
     "/"
+
+  // Guard against redundant duplicate invocations on initial page load / refresh
+  // If a request for this exact article is already in-flight, let it complete
+  if (activePath === currentPath && activeController) {
+    return
+  }
+
+  // If navigating to a different article, abort the previous request
+  if (activeController) {
+    activeController.abort()
+    activeController = null
+  }
+
+  const generation = ++currentGeneration
+  activePath = currentPath
+  const controller = new AbortController()
+  activeController = controller
+  const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS)
+
+  const countElement = badge.querySelector("[data-pageview-count]") as HTMLElement | null
 
   try {
     const response = await fetch(API_URL, {
@@ -44,17 +55,16 @@ async function updatePageviewBadge() {
 
     clearTimeout(timeoutId)
 
-    // Ensure page has not navigated while request was in-flight
+    // Ensure page has not navigated away while request was in-flight
     if (generation !== currentGeneration) {
       return
     }
 
     if (!response.ok) {
-      // Non-200 response (404, rate limit, server error) -> leave badge blank
-      if (countElement) {
-        countElement.textContent = ""
+      // 404 or other HTTP error
+      if (response.status === 404 && countElement) {
+        countElement.textContent = "0 views"
       }
-      badge.style.display = "none"
       return
     }
 
@@ -66,36 +76,28 @@ async function updatePageviewBadge() {
       } else {
         badge.textContent = `${countFormatted} views`
       }
-      badge.style.display = ""
       badge.classList.remove("pageview-loading")
       badge.classList.add("pageview-loaded")
-    } else {
-      if (countElement) {
-        countElement.textContent = ""
-      }
-      badge.style.display = "none"
     }
-  } catch {
-    // Quiet timeout or network failure - do not disrupt blog reader experience
-    if (generation === currentGeneration) {
-      if (countElement) {
-        countElement.textContent = ""
-      }
-      badge.style.display = "none"
+  } catch (err: any) {
+    // Ignore intentional navigation aborts
+    if (err?.name === "AbortError") {
+      return
     }
+    // On transient network error, keep badge visible with placeholder rather than disappearing
   } finally {
-    if (activeAbortController === controller) {
-      activeAbortController = null
+    if (activeController === controller) {
+      activeController = null
+      activePath = null
     }
   }
 }
 
-// Initial load
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", updatePageviewBadge)
-} else {
+// Quartz SPA router triggers "nav" on initial load and every navigation
+document.addEventListener("nav", updatePageviewBadge)
+
+// Fallback for direct non-SPA page loads / cached loads
+if (document.readyState === "complete") {
   updatePageviewBadge()
 }
 
-// Quartz SPA navigation event
-document.addEventListener("nav", updatePageviewBadge)
