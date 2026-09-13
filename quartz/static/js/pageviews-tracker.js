@@ -39,7 +39,7 @@
       const response = await fetch(API_URL, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "text/plain",
         },
         body: JSON.stringify({ path: currentPath }),
         signal: controller.signal,
