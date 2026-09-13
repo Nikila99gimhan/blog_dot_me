@@ -10,3 +10,4 @@ private/
 .replit
 replit.nix
 DEVELOPMENT_STATE.md
+.agents/

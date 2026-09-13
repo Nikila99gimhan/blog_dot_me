@@ -23,6 +23,7 @@ import Breadcrumbs from "./Breadcrumbs"
 import ConditionalRender from "./ConditionalRender"
 import ShareButtons from "./ShareButtons"
 import CommitGrid from "./CommitGrid"
+import PageViews from "./PageViews"
 
 export {
   ArticleTitle,
@@ -50,4 +51,5 @@ export {
   ConditionalRender,
   ShareButtons,
   CommitGrid,
+  PageViews,
 }

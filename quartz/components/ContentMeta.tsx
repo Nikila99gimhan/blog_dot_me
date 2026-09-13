@@ -5,6 +5,9 @@ import { classNames } from "../util/lang"
 import { i18n } from "../i18n"
 import { JSX } from "preact"
 import style from "./styles/contentMeta.scss"
+import { PageViewsBadge } from "./PageViews"
+// @ts-ignore
+import script from "./scripts/pageviews-tracker.inline"
 
 interface ContentMetaOptions {
   /**
@@ -12,18 +15,21 @@ interface ContentMetaOptions {
    */
   showReadingTime: boolean
   showComma: boolean
+  showPageViews: boolean
 }
 
 const defaultOptions: ContentMetaOptions = {
   showReadingTime: true,
   showComma: true,
+  showPageViews: true,
 }
 
 export default ((opts?: Partial<ContentMetaOptions>) => {
   // Merge options with defaults
   const options: ContentMetaOptions = { ...defaultOptions, ...opts }
 
-  function ContentMetadata({ cfg, fileData, displayClass }: QuartzComponentProps) {
+  function ContentMetadata(props: QuartzComponentProps) {
+    const { cfg, fileData, displayClass } = props
     const text = fileData.text
 
     if (text) {
@@ -42,6 +48,14 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
         segments.push(<span class="reading-time-badge">📖 {displayedTime}</span>)
       }
 
+      // Live pageview tracking badge next to reading time / date metadata in article headers
+      if (options.showPageViews) {
+        const pv = PageViewsBadge(props)
+        if (pv) {
+          segments.push(pv)
+        }
+      }
+
       return (
         <p show-comma={options.showComma} class={classNames(displayClass, "content-meta")}>
           {segments}
@@ -53,6 +67,7 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
   }
 
   ContentMetadata.css = style
+  ContentMetadata.afterDOMLoaded = script
 
   return ContentMetadata
 }) satisfies QuartzComponentConstructor

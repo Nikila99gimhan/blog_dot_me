@@ -11,9 +11,7 @@ const config: QuartzConfig = {
     pageTitleSuffix: " | nikila.dev",
     enableSPA: true,
     enablePopovers: true,
-    analytics: {
-      provider: "plausible",
-    },
+    analytics: null,
     locale: "en-US",
     baseUrl: "nikila.dev",
     ignorePatterns: ["private", "templates", ".obsidian", "drafts"],
