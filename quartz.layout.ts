@@ -21,7 +21,7 @@ export const defaultContentPageLayout: PageLayout = {
   beforeBody: [
     Component.ConditionalRender({
       condition: (props) => props.fileData.slug === "index",
-      component: Component.CommitGrid()
+      component: Component.CommitGrid(),
     }),
     Component.Breadcrumbs(),
     Component.ArticleTitle(),

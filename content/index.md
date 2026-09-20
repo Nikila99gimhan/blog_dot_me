@@ -18,6 +18,43 @@ $ uname -a
 $ ls -la ~/blog
 ```
 
+```bash
+$ cat ~/community/organizer.yaml
+```
+
+<div class="community-spotlight">
+  <div class="community-spotlight-header">
+    <div class="hero-card-dots">
+      <span class="dot-red"></span>
+      <span class="dot-yellow"></span>
+      <span class="dot-green"></span>
+    </div>
+    <span class="hero-card-path">~/community/organizer</span>
+    <span class="hero-badge badge-active">MVP · ORGANIZER</span>
+  </div>
+  <div class="community-tiles">
+    <a href="https://www.devforum.lk/" target="_blank" rel="noopener noreferrer" class="community-tile">
+      <span class="community-logo-chip"><img src="./logos/sri-lanka-developer-forum-logo.png" alt="Sri Lanka Developer Forum logo" /></span>
+      <span class="community-tile-text">
+        <span class="community-tile-name">Sri Lanka Developer Forum</span>
+        <span class="community-tile-role">Organizer</span>
+        <span class="community-tile-desc">Technical sessions, workshops & mentorship for Sri Lanka's developer community.</span>
+      </span>
+    </a>
+    <a href="https://www.facebook.com/CloudNativeSL/" target="_blank" rel="noopener noreferrer" class="community-tile">
+      <span class="community-logo-chip"><img src="./logos/cloud-native-sri-lanka-logo.jpg" alt="Cloud Native Sri Lanka logo" /></span>
+      <span class="community-tile-text">
+        <span class="community-tile-name">Cloud Native Sri Lanka</span>
+        <span class="community-tile-role">Organizer</span>
+        <span class="community-tile-desc">CNCF ecosystem meetups on Kubernetes & platform engineering.</span>
+      </span>
+    </a>
+  </div>
+  <div class="community-spotlight-footer">
+    <a href="/about" class="hero-card-action">Microsoft MVP · Full Profile & Credentials →</a>
+  </div>
+</div>
+
 <div class="hero-grid">
 
 <a href="/devops" class="hero-card">

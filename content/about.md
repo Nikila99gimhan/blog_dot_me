@@ -238,7 +238,7 @@ $ cat ~/communities/roles.yaml
 
 <div class="hero-grid">
 
-<div class="hero-card">
+<a href="https://www.devforum.lk/" target="_blank" rel="noopener noreferrer" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -246,9 +246,12 @@ $ cat ~/communities/roles.yaml
       <span class="dot-green"></span>
     </div>
     <span class="hero-card-path">~/communities/sl-dev-forum</span>
-    <span class="hero-badge badge-active">LEADER</span>
+    <span class="hero-badge badge-active">ORGANIZER</span>
   </div>
-  <div class="hero-card-title">Sri Lanka Developer Forum</div>
+  <div class="community-card-body">
+    <span class="community-logo-chip community-logo-chip--sm"><img src="./logos/sri-lanka-developer-forum-logo.png" alt="Sri Lanka Developer Forum logo" /></span>
+    <div class="hero-card-title">Sri Lanka Developer Forum</div>
+  </div>
   <div class="hero-card-desc">Leading and organizing Microsoft-focused technical sessions, workshops, and mentorship programs for students and early-career engineers across Sri Lanka.</div>
   <div class="hero-card-footer">
     <div class="hero-card-tags">
@@ -256,10 +259,11 @@ $ cat ~/communities/roles.yaml
       <span class="tag-link">mentorship</span>
       <span class="tag-link">community</span>
     </div>
+    <span class="hero-card-action">devforum.lk →</span>
   </div>
-</div>
+</a>
 
-<div class="hero-card">
+<a href="https://www.facebook.com/CloudNativeSL/" target="_blank" rel="noopener noreferrer" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -269,7 +273,10 @@ $ cat ~/communities/roles.yaml
     <span class="hero-card-path">~/communities/cloud-native-lk</span>
     <span class="hero-badge badge-blueprint">ORGANIZER</span>
   </div>
-  <div class="hero-card-title">Cloud Native Sri Lanka</div>
+  <div class="community-card-body">
+    <span class="community-logo-chip community-logo-chip--sm"><img src="./logos/cloud-native-sri-lanka-logo.jpg" alt="Cloud Native Sri Lanka logo" /></span>
+    <div class="hero-card-title">Cloud Native Sri Lanka</div>
+  </div>
   <div class="hero-card-desc">Organizing open-source and CNCF ecosystem meetups covering Kubernetes, platform engineering, and cloud-native architecture patterns.</div>
   <div class="hero-card-footer">
     <div class="hero-card-tags">
@@ -277,8 +284,9 @@ $ cat ~/communities/roles.yaml
       <span class="tag-link">kubernetes</span>
       <span class="tag-link">open-source</span>
     </div>
+    <span class="hero-card-action">Facebook →</span>
   </div>
-</div>
+</a>
 
 </div>
 
