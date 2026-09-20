@@ -304,7 +304,7 @@ $ gallery-scan --source=~/community/events --auto
       <span class="dot-green"></span>
     </div>
     <span class="hero-card-path">~/community/gallery</span>
-    <span class="hero-badge badge-active" data-gallery-counter>01 / 12</span>
+    <span class="hero-badge badge-active" data-gallery-counter>01 / 18</span>
   </div>
 
   <div class="terminal-gallery-viewport">
@@ -344,6 +344,24 @@ $ gallery-scan --source=~/community/events --auto
       </div>
       <div class="terminal-gallery-slide" data-index="11">
         <img src="./images/event-12.jpg" alt="Cloud Native Sri Lanka Community Gathering" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="12">
+        <img src="./images/event-13.jpg" alt="Community Meetup and Interactive Technical Discussion" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="13">
+        <img src="./images/event-14.jpg" alt="Cloud Native Sri Lanka Technical Session" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="14">
+        <img src="./images/event-15.jpg" alt="Developer Forum Workshop and Speaker Presentation" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="15">
+        <img src="./images/event-16.jpg" alt="Hands-on Lab and Developer Mentorship" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="16">
+        <img src="./images/event-17.jpg" alt="Community Panel Discussion and Q&amp;A" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="17">
+        <img src="./images/event-18.jpg" alt="Platform Engineering and Community Team Gathering" loading="lazy" />
       </div>
     </div>
   </div>
