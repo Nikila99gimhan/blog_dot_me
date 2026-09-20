@@ -1013,3 +1013,198 @@ footer {
   gap: 0.25rem;
   transition: all 0.15s ease;
 }
+
+.badge-expired {
+  background: rgba(255, 71, 87, 0.1);
+  color: var(--terminal-red);
+  border: 1px solid rgba(255, 71, 87, 0.3);
+}
+
+// ── About page — MVP spotlight banner ─────────────────────────
+.mvp-banner {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  border: 1px solid var(--terminal-border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 1.5rem 0 2rem 0;
+  background: rgba(26, 29, 38, 0.45);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--terminal-green), var(--terminal-cyan));
+  }
+}
+
+[saved-theme="light"] .mvp-banner {
+  background: rgba(224, 224, 216, 0.4);
+}
+
+.mvp-banner-badge {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  flex-shrink: 0;
+  border-radius: 6px;
+}
+
+.mvp-banner-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mvp-banner-title {
+  font-family: var(--font-mono) !important;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0.6rem 0 0.4rem 0;
+  color: var(--dark);
+}
+
+[saved-theme="dark"] .mvp-banner-title {
+  color: #e2e8f0;
+}
+
+.mvp-banner-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  color: var(--darkgray);
+  margin-bottom: 0.75rem;
+
+  strong {
+    color: var(--terminal-cyan);
+    font-weight: 600;
+  }
+}
+
+.mvp-banner-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--darkgray);
+  margin-bottom: 1rem;
+}
+
+.mvp-banner-links {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.mvp-link-btn {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  text-decoration: none !important;
+  border: 1px solid var(--terminal-border);
+  color: var(--terminal-green) !important;
+  transition: all 0.15s ease;
+
+  &:hover {
+    border-color: var(--terminal-green);
+    background: rgba(57, 255, 20, 0.08);
+  }
+}
+
+// ── About page — certification cards ──────────────────────────
+.cert-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--terminal-border);
+  border-radius: 8px;
+  background: rgba(26, 29, 38, 0.45);
+  padding: 1.15rem 1.25rem;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: translateY(-3px);
+    border-color: var(--terminal-cyan);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.12);
+  }
+}
+
+[saved-theme="light"] .cert-card {
+  background: rgba(224, 224, 216, 0.4);
+
+  &:hover {
+    border-color: var(--secondary);
+    box-shadow: 0 4px 16px rgba(45, 106, 79, 0.12);
+  }
+}
+
+.cert-card-body {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.cert-card-image {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.cert-card-info {
+  min-width: 0;
+
+  .hero-card-title {
+    font-size: 0.92rem;
+    margin: 0 0 0.2rem 0;
+  }
+
+  .hero-card-desc {
+    font-size: 0.78rem;
+    margin: 0;
+  }
+}
+
+// ── About page — git-log style credential timeline ─────────────
+.git-timeline {
+  border-left: 2px solid var(--terminal-border);
+  margin: 1rem 0 2rem 0.4rem;
+  padding-left: 1.25rem;
+}
+
+.git-node {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0.55rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+
+  &::before {
+    content: "●";
+    position: absolute;
+    left: -1.5rem;
+    color: var(--terminal-green);
+  }
+}
+
+.git-node-date {
+  color: var(--terminal-dim);
+  flex-shrink: 0;
+}
+
+.git-node-msg {
+  color: var(--darkgray);
+}
+
+[saved-theme="dark"] .git-node-msg {
+  color: #c8ceda;
+}
