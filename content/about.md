@@ -290,7 +290,83 @@ $ cat ~/communities/roles.yaml
 
 </div>
 
-## 03 // Credential Timeline
+## 03 // Community Events & Speaking Gallery
+
+```bash
+$ gallery-scan --source=~/community/events --auto
+```
+
+<div class="terminal-gallery" data-gallery data-interval="4500">
+  <div class="terminal-gallery-header">
+    <div class="hero-card-dots">
+      <span class="dot-red"></span>
+      <span class="dot-yellow"></span>
+      <span class="dot-green"></span>
+    </div>
+    <span class="hero-card-path">~/community/gallery</span>
+    <div class="terminal-gallery-status">
+      <span class="terminal-gallery-indicator" data-gallery-status>AUTO-PLAY</span>
+      <span class="hero-badge badge-active" data-gallery-counter>01 / 12</span>
+    </div>
+  </div>
+
+  <div class="terminal-gallery-viewport">
+    <div class="terminal-gallery-slides" data-gallery-slides>
+      <div class="terminal-gallery-slide active" data-index="0" data-caption="Developer Community Tech Meetup · Sri Lanka Developer Forum &amp; Cloud Native Sri Lanka">
+        <img src="./images/event-01.jpg" alt="Developer Community Tech Meetup" loading="eager" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="1" data-caption="Community Keynote &amp; Speaker Session · Colombo">
+        <img src="./images/event-02.jpg" alt="Community Keynote and Speaker Session" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="2" data-caption="Technical Keynote Presentation · Modern Software Delivery">
+        <img src="./images/event-03.jpg" alt="Technical Keynote Presentation" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="3" data-caption="Kubernetes &amp; Cloud Architecture Stage Session">
+        <img src="./images/event-04.jpg" alt="Kubernetes and Cloud Architecture Stage Session" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="4" data-caption="DevOps Leadership &amp; Platform Engineering Talk">
+        <img src="./images/event-05.jpg" alt="DevOps Leadership and Platform Engineering Talk" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="5" data-caption="Auditorium Technical Workshop · Empowering Engineers">
+        <img src="./images/event-06.jpg" alt="Auditorium Technical Workshop" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="6" data-caption="Hands-on Workshop &amp; Mentorship Session">
+        <img src="./images/event-07.jpg" alt="Hands-on Workshop and Mentorship Session" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="7" data-caption="Conference Podium Session on Distributed Platforms">
+        <img src="./images/event-08.jpg" alt="Conference Podium Session on Distributed Platforms" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="8" data-caption="Deep-Dive Session on Cloud-Native Technologies">
+        <img src="./images/event-09.jpg" alt="Deep-Dive Session on Cloud-Native Technologies" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="9" data-caption="Tech Summit Presentation · Platform Engineering in Production">
+        <img src="./images/event-10.jpg" alt="Tech Summit Presentation" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="10" data-caption="Full-House Community Gathering &amp; Interactive Q&amp;A">
+        <img src="./images/event-11.jpg" alt="Full-House Community Gathering" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="11" data-caption="Cloud Native Sri Lanka Community Gathering &amp; Team">
+        <img src="./images/event-12.jpg" alt="Cloud Native Sri Lanka Community Gathering" loading="lazy" />
+      </div>
+    </div>
+
+    <button class="gallery-nav-btn prev" data-gallery-prev aria-label="Previous image">‹</button>
+    <button class="gallery-nav-btn next" data-gallery-next aria-label="Next image">›</button>
+  </div>
+
+  <div class="terminal-gallery-footer">
+    <div class="terminal-gallery-meta">
+      <span class="terminal-prompt-prefix">$</span>
+      <span class="terminal-gallery-caption" data-gallery-caption>Developer Community Tech Meetup · Sri Lanka Developer Forum &amp; Cloud Native Sri Lanka</span>
+    </div>
+    <div class="terminal-gallery-controls">
+      <button class="gallery-control-btn" data-gallery-toggle aria-label="Toggle autoplay">⏸ PAUSE</button>
+      <div class="gallery-dots" data-gallery-dots></div>
+    </div>
+  </div>
+</div>
+
+## 04 // Credential Timeline
 
 ```bash
 $ git log --graph --oneline --decorate --date=short

@@ -6,8 +6,11 @@ import { i18n } from "../i18n"
 import { JSX } from "preact"
 import style from "./styles/contentMeta.scss"
 import { PageViewsBadge } from "./PageViews"
+import { concatenateResources } from "../util/resources"
 // @ts-ignore
 import script from "./scripts/pageviews-tracker.inline"
+// @ts-ignore
+import galleryScript from "./scripts/gallery.inline"
 
 interface ContentMetaOptions {
   /**
@@ -67,7 +70,7 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
   }
 
   ContentMetadata.css = style
-  ContentMetadata.afterDOMLoaded = script
+  ContentMetadata.afterDOMLoaded = concatenateResources(script, galleryScript)
 
   return ContentMetadata
 }) satisfies QuartzComponentConstructor
