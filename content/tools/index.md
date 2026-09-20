@@ -23,8 +23,8 @@ $ cat ~/tools/manifest.yaml
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/tools/k8s-ecosystem</span>
     </div>
+    <span class="hero-card-path">~/tools/k8s-ecosystem</span>
     <span class="hero-badge badge-active">TOOLCHAIN</span>
   </div>
   <div class="hero-card-title">Kubernetes Cluster Navigation & Logs</div>
@@ -45,8 +45,8 @@ $ cat ~/tools/manifest.yaml
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/tools/iac-orchestration</span>
     </div>
+    <span class="hero-card-path">~/tools/iac-orchestration</span>
     <span class="hero-badge badge-blueprint">IAC STACK</span>
   </div>
   <div class="hero-card-title">Infrastructure as Code & Security</div>
@@ -67,8 +67,8 @@ $ cat ~/tools/manifest.yaml
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/tools/containers-ebpf</span>
     </div>
+    <span class="hero-card-path">~/tools/containers-ebpf</span>
     <span class="hero-badge badge-active">RUNTIME</span>
   </div>
   <div class="hero-card-title">Container Inspection & eBPF Networking</div>
@@ -89,8 +89,8 @@ $ cat ~/tools/manifest.yaml
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/tools/terminal-dotfiles</span>
     </div>
+    <span class="hero-card-path">~/tools/terminal-dotfiles</span>
     <span class="hero-badge badge-upcoming">DOTFILES</span>
   </div>
   <div class="hero-card-title">Terminal Environment & Productivity</div>

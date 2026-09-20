@@ -26,8 +26,8 @@ $ ls -la ~/blog
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/devops</span>
     </div>
+    <span class="hero-card-path">~/devops</span>
     <span class="hero-badge badge-active">3 POSTS</span>
   </div>
   <div class="hero-card-title">📁 devops/</div>
@@ -48,8 +48,8 @@ $ ls -la ~/blog
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/notes</span>
     </div>
+    <span class="hero-card-path">~/notes</span>
     <span class="hero-badge badge-blueprint">2 POSTS</span>
   </div>
   <div class="hero-card-title">📁 notes/</div>
@@ -70,8 +70,8 @@ $ ls -la ~/blog
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/til</span>
     </div>
+    <span class="hero-card-path">~/til</span>
     <span class="hero-badge badge-active">3 POSTS</span>
   </div>
   <div class="hero-card-title">📁 til/</div>
@@ -92,8 +92,8 @@ $ ls -la ~/blog
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/tools</span>
     </div>
+    <span class="hero-card-path">~/tools</span>
     <span class="hero-badge badge-upcoming">STACK</span>
   </div>
   <div class="hero-card-title">📁 tools/</div>
@@ -114,8 +114,8 @@ $ ls -la ~/blog
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/tech-talks</span>
     </div>
+    <span class="hero-card-path">~/tech-talks</span>
     <span class="hero-badge badge-upcoming">SESSIONS</span>
   </div>
   <div class="hero-card-title">📁 tech-talks/</div>
@@ -136,8 +136,8 @@ $ ls -la ~/blog
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/communities</span>
     </div>
+    <span class="hero-card-path">~/communities</span>
     <span class="hero-badge badge-upcoming">NETWORK</span>
   </div>
   <div class="hero-card-title">📁 communities/</div>

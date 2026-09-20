@@ -23,8 +23,8 @@ $ cat ~/tech-talks/sessions.log
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/talks/gateway-api</span>
     </div>
+    <span class="hero-card-path">~/talks/gateway-api</span>
     <span class="hero-badge badge-blueprint">CONFERENCE</span>
   </div>
   <div class="hero-card-title">Kubernetes Gateway API & Modern Ingress Patterns</div>
@@ -45,8 +45,8 @@ $ cat ~/tech-talks/sessions.log
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/talks/idp-scaling</span>
     </div>
+    <span class="hero-card-path">~/talks/idp-scaling</span>
     <span class="hero-badge badge-active">TALK</span>
   </div>
   <div class="hero-card-title">Engineering Internal Developer Platforms</div>
@@ -67,8 +67,8 @@ $ cat ~/tech-talks/sessions.log
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/talks/ebpf-observability</span>
     </div>
+    <span class="hero-card-path">~/talks/ebpf-observability</span>
     <span class="hero-badge badge-upcoming">WORKSHOP</span>
   </div>
   <div class="hero-card-title">eBPF in Cloud-Native Observability & Security</div>

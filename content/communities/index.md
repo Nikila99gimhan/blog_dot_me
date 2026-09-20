@@ -23,8 +23,8 @@ $ cat ~/communities/network.json
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/communities/cncf</span>
     </div>
+    <span class="hero-card-path">~/communities/cncf</span>
     <span class="hero-badge badge-active">ECOSYSTEM</span>
   </div>
   <div class="hero-card-title">CNCF & Cloud Native Community</div>
@@ -45,8 +45,8 @@ $ cat ~/communities/network.json
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/communities/devops-guild</span>
     </div>
+    <span class="hero-card-path">~/communities/devops-guild</span>
     <span class="hero-badge badge-blueprint">MEETUPS</span>
   </div>
   <div class="hero-card-title">DevOps & Platform Engineering Meetups</div>
@@ -67,8 +67,8 @@ $ cat ~/communities/network.json
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/communities/oss</span>
     </div>
+    <span class="hero-card-path">~/communities/oss</span>
     <span class="hero-badge badge-upcoming">CONTRIBUTIONS</span>
   </div>
   <div class="hero-card-title">Open Source Contributions & Mentorship</div>

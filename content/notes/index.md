@@ -23,8 +23,8 @@ $ tree ~/notes --sort=date
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/notes/anyscale-azure</span>
     </div>
+    <span class="hero-card-path">~/notes/anyscale-azure</span>
     <span class="hero-badge badge-blueprint">BLUEPRINT</span>
   </div>
   <div class="hero-card-title">Anyscale on Azure</div>
@@ -45,8 +45,8 @@ $ tree ~/notes --sort=date
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/notes/arc-paas</span>
     </div>
+    <span class="hero-card-path">~/notes/arc-paas</span>
     <span class="hero-badge badge-blueprint">BLUEPRINT</span>
   </div>
   <div class="hero-card-title">ARC: GitHub Runners Platform as a Service</div>
@@ -67,8 +67,8 @@ $ tree ~/notes --sort=date
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/notes/crossplane-control-planes</span>
     </div>
+    <span class="hero-card-path">~/notes/crossplane-control-planes</span>
     <span class="hero-badge badge-upcoming">UPCOMING</span>
   </div>
   <div class="hero-card-title">Zero-Trust Control Planes with Crossplane</div>

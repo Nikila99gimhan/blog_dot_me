@@ -21,6 +21,7 @@ interface RenderComponents {
   footer: QuartzComponent
 }
 
+const buildVersion = Date.now().toString(36)
 const headerRegex = new RegExp(/h[1-6]/)
 export function pageResources(
   baseDir: FullSlug | RelativeURL,
@@ -32,7 +33,7 @@ export function pageResources(
   const resources: StaticResources = {
     css: [
       {
-        content: joinSegments(baseDir, "index.css"),
+        content: `${joinSegments(baseDir, "index.css")}?v=${buildVersion}`,
       },
       ...staticResources.css,
     ],

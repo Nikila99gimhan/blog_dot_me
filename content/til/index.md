@@ -23,8 +23,8 @@ $ ls -lt ~/til
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/til/kubectl-explain</span>
     </div>
+    <span class="hero-card-path">~/til/kubectl-explain</span>
     <span class="hero-badge badge-active">CLI TRICK</span>
   </div>
   <div class="hero-card-title">kubectl explain is a full API reference</div>
@@ -45,8 +45,8 @@ $ ls -lt ~/til
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/til/helm-atomic</span>
     </div>
+    <span class="hero-card-path">~/til/helm-atomic</span>
     <span class="hero-badge badge-blueprint">GOTCHA</span>
   </div>
   <div class="hero-card-title">Helm --atomic does automatic rollback</div>
@@ -67,8 +67,8 @@ $ ls -lt ~/til
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/til/crictl-debugging</span>
     </div>
+    <span class="hero-card-path">~/til/crictl-debugging</span>
     <span class="hero-badge badge-active">DEBUGGING</span>
   </div>
   <div class="hero-card-title">crictl is kubectl for the node</div>

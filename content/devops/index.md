@@ -23,8 +23,8 @@ $ tree ~/devops --sort=date
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/devops/azure-appgw</span>
     </div>
+    <span class="hero-card-path">~/devops/azure-appgw</span>
     <span class="hero-badge badge-active">DEEP DIVE</span>
   </div>
   <div class="hero-card-title">Azure Application Gateway for Containers</div>
@@ -45,8 +45,8 @@ $ tree ~/devops --sort=date
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/devops/k8s-tls</span>
     </div>
+    <span class="hero-card-path">~/devops/k8s-tls</span>
     <span class="hero-badge badge-blueprint">ARCHITECTURE</span>
   </div>
   <div class="hero-card-title">Kubernetes TLS Certificate Management</div>
@@ -67,8 +67,8 @@ $ tree ~/devops --sort=date
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/devops/k8s-v1.37</span>
     </div>
+    <span class="hero-card-path">~/devops/k8s-v1.37</span>
     <span class="hero-badge badge-active">NEW</span>
   </div>
   <div class="hero-card-title">Kubernetes v1.37 Sneak Peek</div>
@@ -88,8 +88,8 @@ $ tree ~/devops --sort=date
       <span class="dot-red"></span>
       <span class="dot-yellow"></span>
       <span class="dot-green"></span>
-      <span class="hero-card-path">~/devops/gitops-mesh</span>
     </div>
+    <span class="hero-card-path">~/devops/gitops-mesh</span>
     <span class="hero-badge badge-upcoming">UPCOMING</span>
   </div>
   <div class="hero-card-title">Multi-Cluster GitOps & Cilium Mesh</div>
