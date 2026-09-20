@@ -100,4 +100,3 @@ document.addEventListener("nav", updatePageviewBadge)
 if (document.readyState === "complete") {
   updatePageviewBadge()
 }
-
