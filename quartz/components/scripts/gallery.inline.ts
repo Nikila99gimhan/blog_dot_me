@@ -14,7 +14,16 @@ function initGallery() {
 
     let currentIndex = 0
     let timer: number | null = null
-    const intervalTime = parseInt(gallery.getAttribute("data-interval") || "4500", 10)
+    const intervalTime = parseInt(gallery.getAttribute("data-interval") || "3200", 10)
+
+    // Preload all slide images into memory immediately so auto-sliding is instant
+    slides.forEach((slide) => {
+      const img = slide.querySelector("img")
+      if (img && img.src) {
+        const preloader = new Image()
+        preloader.src = img.src
+      }
+    })
 
     function updateUI() {
       slides.forEach((slide, i) => {
@@ -64,16 +73,17 @@ function initGallery() {
       startTimer()
     }
 
-    // Pause on hover
-    gallery.addEventListener("mouseenter", stopTimer)
-    gallery.addEventListener("mouseleave", startTimer)
-    gallery.addEventListener("touchstart", stopTimer, { passive: true })
+    // Clean up timer on Quartz SPA navigation
+    if (typeof window.addCleanup === "function") {
+      window.addCleanup(() => stopTimer())
+    }
 
-    // Click on viewport advances to next slide
+    // Click on viewport advances to next slide immediately
     if (viewport) {
       viewport.addEventListener("click", () => nextSlide())
     }
 
+    // Keyboard navigation when focused
     gallery.setAttribute("tabindex", "0")
     gallery.addEventListener("keydown", (e: Event) => {
       const key = (e as KeyboardEvent).key
@@ -92,3 +102,7 @@ function initGallery() {
 document.addEventListener("nav", () => {
   initGallery()
 })
+
+if (document.readyState === "complete") {
+  initGallery()
+}

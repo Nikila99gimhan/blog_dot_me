@@ -296,7 +296,7 @@ $ cat ~/communities/roles.yaml
 $ gallery-scan --source=~/community/events --auto
 ```
 
-<div class="terminal-gallery" data-gallery data-interval="4500">
+<div class="terminal-gallery" data-gallery data-interval="3200">
   <div class="terminal-gallery-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -313,55 +313,55 @@ $ gallery-scan --source=~/community/events --auto
         <img src="./images/event-01.jpg" alt="Developer Community Tech Meetup" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="1">
-        <img src="./images/event-02.jpg" alt="Community Keynote and Speaker Session" loading="lazy" />
+        <img src="./images/event-02.jpg" alt="Community Keynote and Speaker Session" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="2">
-        <img src="./images/event-03.jpg" alt="Technical Keynote Presentation" loading="lazy" />
+        <img src="./images/event-03.jpg" alt="Technical Keynote Presentation" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="3">
-        <img src="./images/event-04.jpg" alt="Kubernetes and Cloud Architecture Stage Session" loading="lazy" />
+        <img src="./images/event-04.jpg" alt="Kubernetes and Cloud Architecture Stage Session" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="4">
-        <img src="./images/event-05.jpg" alt="DevOps Leadership and Platform Engineering Talk" loading="lazy" />
+        <img src="./images/event-05.jpg" alt="DevOps Leadership and Platform Engineering Talk" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="5">
-        <img src="./images/event-06.jpg" alt="Auditorium Technical Workshop" loading="lazy" />
+        <img src="./images/event-06.jpg" alt="Auditorium Technical Workshop" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="6">
-        <img src="./images/event-07.jpg" alt="Hands-on Workshop and Mentorship Session" loading="lazy" />
+        <img src="./images/event-07.jpg" alt="Hands-on Workshop and Mentorship Session" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="7">
-        <img src="./images/event-08.jpg" alt="Conference Podium Session on Distributed Platforms" loading="lazy" />
+        <img src="./images/event-08.jpg" alt="Conference Podium Session on Distributed Platforms" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="8">
-        <img src="./images/event-09.jpg" alt="Deep-Dive Session on Cloud-Native Technologies" loading="lazy" />
+        <img src="./images/event-09.jpg" alt="Deep-Dive Session on Cloud-Native Technologies" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="9">
-        <img src="./images/event-10.jpg" alt="Tech Summit Presentation" loading="lazy" />
+        <img src="./images/event-10.jpg" alt="Tech Summit Presentation" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="10">
-        <img src="./images/event-11.jpg" alt="Full-House Community Gathering" loading="lazy" />
+        <img src="./images/event-11.jpg" alt="Full-House Community Gathering" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="11">
-        <img src="./images/event-12.jpg" alt="Cloud Native Sri Lanka Community Gathering" loading="lazy" />
+        <img src="./images/event-12.jpg" alt="Cloud Native Sri Lanka Community Gathering" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="12">
-        <img src="./images/event-13.jpg" alt="Community Meetup and Interactive Technical Discussion" loading="lazy" />
+        <img src="./images/event-13.jpg" alt="Community Meetup and Interactive Technical Discussion" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="13">
-        <img src="./images/event-14.jpg" alt="Cloud Native Sri Lanka Technical Session" loading="lazy" />
+        <img src="./images/event-14.jpg" alt="Cloud Native Sri Lanka Technical Session" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="14">
-        <img src="./images/event-15.jpg" alt="Developer Forum Workshop and Speaker Presentation" loading="lazy" />
+        <img src="./images/event-15.jpg" alt="Developer Forum Workshop and Speaker Presentation" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="15">
-        <img src="./images/event-16.jpg" alt="Hands-on Lab and Developer Mentorship" loading="lazy" />
+        <img src="./images/event-16.jpg" alt="Hands-on Lab and Developer Mentorship" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="16">
-        <img src="./images/event-17.jpg" alt="Community Panel Discussion and Q&amp;A" loading="lazy" />
+        <img src="./images/event-17.jpg" alt="Community Panel Discussion and Q&amp;A" loading="eager" />
       </div>
       <div class="terminal-gallery-slide" data-index="17">
-        <img src="./images/event-18.jpg" alt="Platform Engineering and Community Team Gathering" loading="lazy" />
+        <img src="./images/event-18.jpg" alt="Platform Engineering and Community Team Gathering" loading="eager" />
       </div>
     </div>
   </div>

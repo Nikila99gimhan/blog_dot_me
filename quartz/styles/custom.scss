@@ -1392,26 +1392,6 @@ footer {
   gap: 0.5rem;
 }
 
-.terminal-gallery-status {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  margin-left: auto;
-}
-
-.terminal-gallery-indicator {
-  font-family: var(--font-mono);
-  font-size: 0.68rem;
-  font-weight: 600;
-  color: var(--terminal-dim);
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-[saved-theme="dark"] .terminal-gallery-indicator {
-  color: #8b949e;
-}
-
 .terminal-gallery-viewport {
   position: relative;
   width: 100%;
