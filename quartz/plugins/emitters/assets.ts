@@ -1,4 +1,4 @@
-import { FilePath, joinSegments, slugifyFilePath } from "../../util/path"
+import { FilePath, FullSlug, joinSegments, slugifyFilePath } from "../../util/path"
 import { QuartzEmitterPlugin } from "../types"
 import path from "path"
 import fs from "fs"
@@ -14,7 +14,11 @@ const filesToCopy = async (argv: Argv, cfg: QuartzConfig) => {
 const copyFile = async (argv: Argv, fp: FilePath) => {
   const src = joinSegments(argv.directory, fp) as FilePath
 
-  const name = slugifyFilePath(fp)
+  let name = slugifyFilePath(fp)
+  const ext = path.extname(fp).toLowerCase()
+  if (ext === ".html") {
+    name = (name + ".html") as FullSlug
+  }
   const dest = joinSegments(argv.output, name) as FilePath
 
   // ensure dir exists
@@ -36,13 +40,16 @@ export const Assets: QuartzEmitterPlugin = () => {
     },
     async *partialEmit(ctx, _content, _resources, changeEvents) {
       for (const changeEvent of changeEvents) {
-        const ext = path.extname(changeEvent.path)
+        const ext = path.extname(changeEvent.path).toLowerCase()
         if (ext === ".md") continue
 
         if (changeEvent.type === "add" || changeEvent.type === "change") {
           yield copyFile(ctx.argv, changeEvent.path)
         } else if (changeEvent.type === "delete") {
-          const name = slugifyFilePath(changeEvent.path)
+          let name = slugifyFilePath(changeEvent.path)
+          if (ext === ".html") {
+            name = (name + ".html") as FullSlug
+          }
           const dest = joinSegments(ctx.argv.output, name) as FilePath
           await fs.promises.unlink(dest)
         }

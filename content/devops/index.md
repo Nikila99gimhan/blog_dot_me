@@ -61,6 +61,28 @@ $ tree ~/devops --sort=date
   </div>
 </a>
 
+<a href="/devops/your-policy-checks-are-green" class="hero-card">
+  <div class="hero-card-header">
+    <div class="hero-card-dots">
+      <span class="dot-red"></span>
+      <span class="dot-yellow"></span>
+      <span class="dot-green"></span>
+    </div>
+    <span class="hero-card-path">~/devops/policy-impact</span>
+    <span class="hero-badge badge-active">NEW</span>
+  </div>
+  <div class="hero-card-title">Your Policy Checks Are Green. Your Impact Is Still Unknown.</div>
+  <div class="hero-card-desc">Why shared Terraform/Bicep modules and Helm charts need downstream consumer impact review, and where governed investigation with GitHub Copilot and MCP can help. Includes interactive architecture workbench.</div>
+  <div class="hero-card-footer">
+    <div class="hero-card-tags">
+      <span class="tag-link">governance</span>
+      <span class="tag-link">copilot</span>
+      <span class="tag-link">iac</span>
+    </div>
+    <span class="hero-card-action">Read Blueprint →</span>
+  </div>
+</a>
+
 <a href="/devops/kubernetes-v1-37-sneak-peek" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
@@ -69,7 +91,7 @@ $ tree ~/devops --sort=date
       <span class="dot-green"></span>
     </div>
     <span class="hero-card-path">~/devops/k8s-v1.37</span>
-    <span class="hero-badge badge-active">NEW</span>
+    <span class="hero-badge badge-blueprint">DEEP DIVE</span>
   </div>
   <div class="hero-card-title">Kubernetes v1.37 Sneak Peek</div>
   <div class="hero-card-desc">What platform engineers should actually care about in Kubernetes v1.37: in-place pod resizing GA, Dynamic Resource Allocation (DRA) enhancements, and security controls.</div>

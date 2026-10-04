@@ -65,7 +65,7 @@ $ cat ~/community/organizer.yaml
       <span class="dot-green"></span>
     </div>
     <span class="hero-card-path">~/devops</span>
-    <span class="hero-badge badge-active">3 POSTS</span>
+    <span class="hero-badge badge-active">4 POSTS</span>
   </div>
   <div class="hero-card-title">📁 devops/</div>
   <div class="hero-card-desc">Production blueprints, Kubernetes networking, TLS automation, and cloud infrastructure on AKS.</div>
