@@ -2,7 +2,7 @@
 title: "Your Policy Checks Are Green. Your Impact Is Still Unknown."
 date: 2026-10-04
 tags: [devops, platform-engineering, governance, github-copilot, agentic-workflows, infrastructure-as-code, terraform, bicep]
-description: "Why shared Terraform modules, Bicep modules, and Helm charts need consumer impact review, and where governed investigation with GitHub Copilot and MCP can help."
+description: "Green CI can leave downstream compatibility unassessed. Why critical shared repositories need consumer impact review, and where governed investigation with GitHub Copilot and MCP can help."
 draft: false
 ---
 
@@ -10,189 +10,202 @@ draft: false
 
 The build passes. Lint passes. Security scans pass. Your policy checks are green.
 
-Everything required by the repository looks good. But there is still one question we may not have answered: **what happens when other teams consume this change?**
+That means the evaluated configuration passed the checks that ran. It may still leave downstream compatibility unassessed.
 
-For a shared infrastructure repository, that question can reach much further than the pull request in front of us. It can reach payment services, ordering platforms, customer APIs, and analytics pipelines across different subscriptions, cloud accounts, and production regions.
+For a shared infrastructure repository, that distinction matters. A change can satisfy your subnet allowlist, your identity policy and your deployment standards while breaking an assumption in the application that consumes it.
 
-This is the gap I want to explore in this series. In this first article, I focus on why downstream consumer impact matters and where governed agentic investigation can help. In the next article, I will go through an end-to-end implementation using GitHub Copilot, GitHub Actions workflows, and Model Context Protocol (MCP) tools.
+Before I approve a change like that, I want to know what the green result covers. Did we assess the shared module against its test fixtures? Did we also assess the consumers, their selected versions and their production configuration?
 
-## One shared repository, many production assumptions
+This first article is about that gap. I want to explain why critical repositories deserve consumer impact review, what makes that review difficult, and where a governed AI investigator can make a useful contribution. In Part 2, I will build the engineering path using GitHub Copilot, GitHub workflows and Model Context Protocol (MCP) tools.
+
+## One shared repository becomes many production dependencies
 
 Let's take a familiar platform engineering setup.
 
-An organization maintains its custom Terraform modules, Bicep modules, or Helm charts centrally. Application teams consume those building blocks instead of each team creating its own networking, identity, and deployment configuration from scratch.
+An organization maintains custom Terraform modules, Bicep modules and Helm charts centrally. Application teams consume them from shared repositories or artifact registries instead of implementing the same infrastructure patterns independently.
 
-That is a powerful model. It gives the platform team a single place to maintain standards and gives application teams a consistent starting point. But it also creates a deep dependency relationship: a decision made in the shared repository can become a decision inherited by dozens of downstream repositories.
+The platform team maintains the common definitions. Payments, Ordering, Customer APIs and Analytics apply those definitions in different subscriptions, accounts and regions.
 
-Those consumers are rarely identical:
-- One team uses the defaults out of the box.
-- Another overrides the network configuration.
-- One production region has a dedicated DNS arrangement.
-- Another service still depends on an older identity contract.
-- Some teams upgrade immediately; others follow quarterly release windows.
+Some consumers inherit the defaults. Others override them. Some upgrade immediately; others follow a release window. The same module ends up carrying different operational assumptions.
 
-The shared component may be consistent; the environments consuming it are not.
+Helm has a similar relationship through shared dependencies and library charts. A parent chart includes dependencies as subcharts; a library chart supplies reusable template definitions. A change to those definitions can affect the manifests rendered by several application charts. [1]
 
-For Helm, the exact same concern applies to a common library chart or a shared dependency used by several application charts. In Helm terminology, a parent chart includes its dependencies as subcharts; a library chart supplies reusable template definitions. The dependency direction matters, but the operational concern is the same: a shared definition can influence several consumers. [1]
+The benefit of reuse comes with an obligation: understand what a shared change means for the systems that use it.
 
-## A small default change can carry a large impact
+## An approved subnet can still break Payments
 
-Imagine a shared private-network module has a default for where it places a private endpoint. A proposed release changes that default from one approved subnet to another approved subnet.
+Consider an illustrative Azure scenario. These are example configurations, not findings from a live environment.
 
-The change is valid. It builds successfully. The security scan reports no issues. The current policy evaluator accepts both subnet choices, requires private access, and finds no violation in its evaluated configuration.
+A shared module places a database private endpoint in a subnet. A proposed release changes its default from subnet A, `10.40.10.0/24`, to subnet B, `10.40.20.0/24`.
 
-Now look at the consumers:
+Both subnets are approved. Public access remains disabled. The module builds, and the evaluated policy rules pass.
 
-| Consumer | Evidence in this illustrative scenario | What the reviewer can conclude |
-| :--- | :--- | :--- |
-| **Payments** | Adopts the candidate and inherits the changed default | Assess the plan and validate the relevant connectivity assumptions |
-| **Ordering** | Production still resolves the previous release | No exposure through this candidate yet; assess when it upgrades |
-| **Customer APIs** | Adopts the candidate with an explicit subnet override | This particular default is overridden; verify the effective configuration and other changes |
-| **Analytics** | Consumer is known, but current deployment evidence is missing | Impact remains unknown; obtain evidence from the owner |
+Payments inherits this default. Its candidate infrastructure plan proposes replacing the private endpoint in subnet B.
 
-For payments, the critical question is whether the proposed placement works with that consumer's routing, firewall rules, and DNS configuration. An approved subnet does not prove those relationships are correct. If adoption changes a required relationship without the corresponding network configuration, connectivity could be disrupted immediately upon rollout.
+Now add the consumer context: Payments' database traffic passes through an enterprise firewall. Its existing network rule permits the required database traffic to destination addresses in `10.40.10.0/24`. There is no corresponding allowance for subnet B.
 
-Ordering does not inherit that change while it remains pinned to the old release. The customer API override may remove exposure to this specific default change. Analytics cannot be called safe just because we could not inspect it.
+For this example, routing and private-endpoint network policies are configured to keep traffic to either subnet on that inspected path. That is an explicit architecture assumption; private endpoint traffic does not automatically pass through a firewall. Azure supports inspection patterns with the necessary routing configuration. [8][9]
 
-> [!warning] Beware of Transitive Application Failures
-> There can also be an indirect impact through runtime application dependencies. If ordering calls the affected payments service, an ordering transaction could fail even though ordering's infrastructure never adopted the new module. If an analytics pipeline relies on events from that transaction flow, processing could be delayed. Those runtime connections need their own evidence; a module consumer list alone does not establish them.
+If Payments adopts the release and deploys the replacement, the endpoint receives an address from subnet B. Once DNS resolves the database name to that new address, the application sends traffic to `10.40.20.0/24`. If the firewall policy remains unchanged, that traffic is denied.
 
-That is why I distinguish direct module exposure from possible impact through runtime dependencies. Version pinning can prevent a consumer from inheriting the module change while leaving its dependence on another service unchanged.
+Payments loses database connectivity.
 
-This is an illustrative scenario, not a report of an actual outage. A module merge alone does not change existing cloud resources. The change reaches production when a consumer resolves or adopts it and the relevant deployment runs. Even then, the outcome depends on its effective configuration and the resources involved.
+The subnet is permitted by policy. The consumer's connectivity contract has still been broken.
+
+The missing relationship was between the module's placement decision and the firewall configuration maintained elsewhere. A module policy check that never evaluated that relationship could pass correctly.
+
+Other consumers need different conclusions:
+
+| Consumer | Configuration in this example | Direct impact of the candidate |
+| --- | --- | --- |
+| Payments | Adopts the candidate and inherits the default | Endpoint replacement introduces a destination range its existing firewall rule does not permit |
+| Ordering | Production retains the previous immutable release | Does not inherit this module change yet |
+| Customer APIs | Adopts the candidate but explicitly selects subnet A | Overrides this default; other candidate changes still need review |
+| Analytics | Known consumer, but current configuration is unavailable | Impact remains unknown until the owner supplies evidence |
+
+There may also be indirect impact. If Ordering calls Payments during checkout, it can experience failed transactions even while its own infrastructure stays on the old release. That runtime relationship needs separate evidence. A module consumer list alone cannot establish it.
 
 ![A shared module change reaches consumers through adoption and deployment, with different outcomes for each consumer.](./shared-module-impact.svg)
 
-The enterprise risk is the combination of a shared dependency, different consumer assumptions, and an incomplete understanding of adoption. A small diff can deserve a large review because of where that dependency is used. Recovery also follows those consumers: reverting the shared source does not automatically restore cloud resources already modified by downstream deployments.
+A merge alone does not change live resources. Exposure follows resolution, adoption and deployment. Recovery follows those consumers too: reverting the shared source does not automatically restore resources already changed by their deployments.
 
-## Green checks have a scope
+## The tools can be right while the review is incomplete
 
-I think we sometimes give a green check more meaning than the check actually carries.
+I would be careful about describing this as a failure of open-source scanners or policy engines.
 
-A successful policy result tells us that the evaluated inputs satisfied the rules that ran. That is valuable evidence. But its meaning still strictly depends on which inputs, rules, and environments were evaluated.
+A linter can validate the syntax. A security scanner can find the patterns it recognizes. A policy engine can enforce the rules and inputs it receives. Each can do its job correctly.
 
-A subnet allowlist answers whether a subnet is permitted. Consumer-specific evaluation answers whether using it changes an endpoint's placement and whether the necessary network relationships have been assessed. Those are fundamentally different questions.
+The gap appears when nobody connects the module diff, the consumer's effective inputs, its deployed version and its operational dependencies into one assessment.
 
-The same applies far beyond networking:
-- A Helm chart can render valid manifests while altering a workload's resource requests, scheduling constraints, or availability assumptions.
-- An identity module can keep permissions within an approved boundary while changing an output format that consumers rely on.
+We should close repeatable parts of that gap with deterministic controls. Consumer tests, rendered-manifest comparisons, infrastructure plans and connectivity checks are all useful. If a compatibility requirement can be expressed and tested reliably, encode it.
 
-Consumer tests, infrastructure plans, and integration checks can catch many of these issues. We should strengthen those controls wherever the relationship can be tested. But a scan of the shared module, using its own synthetic test fixtures, does not automatically become an assessment of every consumer.
+Preview coverage also needs attention. Bicep what-if can leave parts of a deployment unevaluated or exclude resources when analysis short-circuits. Those gaps belong in the review result. A successful preview operation does not establish that every relevant resource was assessed. [2]
 
-> [!warning] What-If Analysis Has Blind Spots
-> Even cloud preview tools have structural limits. Azure Bicep what-if can leave resources unevaluated or exclude resources when nested template analysis short-circuits. A reliable impact report must preserve those gaps rather than describe an incomplete preview as full coverage. [2]
+This is familiar change impact analysis and consumer compatibility review. The problem predates AI. What this series explores is how to make that work more consistent when the evidence is fragmented across an enterprise.
 
-## Versioning helps, but the upgrade still needs review
+## What makes a repository critical?
 
-At this point, the standard platform engineering response is to version every module and pin the consumers. I agree with that direction wholeheartedly.
+Criticality follows the consequences of a change. A repository with a few files can sit underneath a large part of production.
 
-Exact version selection and immutable releases make adoption deliberate. A consumer that stays on an unchanged old release does not receive the candidate simply because it was merged.
+I would look for these properties:
 
-> [!caution] The Danger of Mutable References
-> Mutable references such as a moving branch or floating `latest` tag create a silent exposure path, because a future CI run or unattended schedule may retrieve changed content unexpectedly. Always pin to immutable semantic releases or commit SHAs.
+- **Many consumers:** one definition influences several services, teams or deployment scopes.
+- **Privileged configuration:** changes affect identity, networking, access boundaries or deployment authority.
+- **Shared failure domains:** several consumers can inherit the same incompatible behavior during a coordinated upgrade.
+- **Important production dependencies:** failure affects transaction processing, customer access or another essential service.
+- **Difficult recovery:** correcting the shared source still requires consumer deployments, resource restoration or coordinated action across owners.
 
-Terraform supports version constraints for registry modules and Git references for Git-sourced modules. Bicep registry references include a module tag. These mechanisms identify what a consumer selects; release practices must also preserve the identity of published content. [3][4]
+A repository becomes especially sensitive when several of these properties overlap. That is where I would require impact evidence before approving a shared release, followed by review of each consumer's actual adoption.
 
-> [!note] Terraform Lockfile Scope: Providers vs Remote Modules
-> There is a Terraform detail worth being precise about: `.terraform.lock.hcl` currently tracks provider selections, not remote module selections. Committing it does not, by itself, pin every shared module. Module version constraints and explicit Git tags still require deliberate discipline. [5]
+## Versioning controls adoption. Compatibility still needs evidence.
 
-Even with disciplined versioning, an application team eventually proposes an upgrade. At that point, we still need to understand what changes for its actual configuration.
+Version every shared component and make release adoption deliberate. I agree with that approach.
 
-A version number tells us which release is being selected. It does not tell us whether the upgrade preserves a payment platform's networking assumptions or an application's availability requirements. Versioning controls adoption; impact review informs the adoption decision.
+A consumer pinned to an unchanged, immutable old release does not receive a candidate simply because it was merged. A moving branch reference creates a different exposure path: a later resolution can retrieve changed content without an explicit version bump in the consumer.
 
-## Where governed investigation with Copilot adds value
+Terraform supports version constraints for registry modules and Git references for Git-sourced modules. Bicep registry references include a tag. Published release content must also be protected against unintended replacement. [3][4]
 
-This is where I see a high-leverage role for agentic investigation.
+One Terraform detail matters here: `.terraform.lock.hcl` currently tracks provider selections, not remote module selections. Committing that file does not, by itself, pin every shared module. [5]
 
-I would give the investigation a specific, bounded job: **explain the proposed change against authorized consumer evidence, identify the relationships that need review, and make missing evidence visible.**
+Even with disciplined versioning, someone eventually proposes the Payments upgrade. The question then becomes whether that selected release works with Payments' effective configuration.
 
-The fixed work should remain deterministic:
-1. Resolve the module identity and commit SHA.
-2. Read the maintained consumer inventory.
-3. Record selected versions and overrides.
-4. Collect relevant plan or rendered-manifest differences and available service dependency records.
-5. Identify owners and deployment scopes.
-6. Record which consumers were evaluated and which were not.
+The version identifies the release. It does not establish compatibility with the firewall rule.
 
-Then a Copilot-based investigator can work with that evidence. It can compare the diff with consumer contracts, explain why an inherited default matters, connect a plan change to a documented dependency, and request a targeted lookup when evidence is missing.
+## The work currently falls on people
 
-Model Context Protocol (MCP) can provide that access through narrowly scoped tools. For example, a tool could return the permitted consumer records, resolved versions, owner information, and plan references for a particular module and candidate commit. MCP itself does not discover the organization or establish authorization. The server and its credentials must enforce which repositories and records the investigator can access. [6]
+To assess this change, a reviewer has to find the consumers, resolve their actual module versions, inspect overrides, locate owners and read the relevant plans.
 
-For the example above, a concise, actionable report might say:
+Then the reviewer has to follow the dependencies beyond the module repository. In our example, that means finding the Payments network contract and the firewall configuration owned by another team. Is the document current? Does the rule export describe the same region? Has an exception already changed the effective policy?
 
-> **Payments** adopts the candidate and inherits the changed subnet default. Review the referenced plan and validate connectivity for the affected scope.  
-> **Ordering** remains on the previous release.  
-> **Customer APIs** override this default.  
-> **Analytics** coverage is incomplete, so its impact remains unknown.
+A note saying “use the approved endpoint subnet” is not enough if the plan now selects a different approved subnet.
 
-That report must cite the records behind each statement. If endpoint movement is not demonstrated by the plan, it must remain a possibility to evaluate. If a region was not assessed, the report must say so explicitly.
+This is the human work behind the review: reconciling records that were written at different times, by different teams, for different purposes. A reviewer can spend substantial effort establishing which assumptions still hold before making the actual decision.
 
-The value is a clearer review backed by evidence, especially when the relevant information is spread across repositories and artifacts. It gives owners a grounded starting point for decisions that would otherwise require them to reconstruct the dependency context manually.
+Undocumented dependencies and outdated compatibility records can become technical debt when nobody maintains them. The missing information in a particular review is an evidence gap. The services and regions that could be affected define the potential blast radius.
 
-## The investigation must run when CI succeeds
+I would keep those distinctions clear. They tell us whether we need better documentation, more complete evaluation, or a tighter rollout boundary. An AI-generated report cannot remove those obligations.
 
-There is a critical trigger detail here.
+## Where an AI investigator earns its place
 
-An investigator that runs only after CI failure will miss this entire problem class. The ordinary checks are successful. The reason to investigate is the type, blast radius, and reach of the change.
+The existence of risk is not enough to justify AI.
 
-For a critical shared repository, I would use a trusted deterministic classifier to identify changes that require consumer impact review. That includes changed defaults, interfaces, networking, identity, or deployment scopes. Known uncertainty about consumer coverage should also be visible to the review process.
+If the consumer inventory, candidate subnet and effective firewall policy are available as structured data, a deterministic evaluator can check whether the destination range is permitted. We do not need a language model to compare address ranges.
 
-Passing CI should not skip that classification.
+The stronger case appears earlier in the review: finding the relevant assumption in scattered documentation, reconciling it with a plan change, noticing that a rule export belongs to an older deployment, and asking the specific follow-up that resolves the uncertainty.
 
-The classifier does not need to ask a language model whether a protected module path is important. It can apply reviewed rules. The investigator then helps explain the contextual findings for changes that deserve the extra work.
+That work often involves prose, inconsistent terminology and incomplete contracts. It can be expensive to encode every document relationship as a separate rule. A governed investigator may help interpret the available context and turn it into a focused review question.
+
+I would keep collection deterministic wherever practical: resolve versions and inputs, collect plans and configuration records, identify owners, and record coverage. Give Copilot that prepared evidence first. Let it request additional permitted context only when needed.
+
+MCP tools can expose those records within a controlled scope. The server and its credentials must enforce access to the permitted repositories and artifacts. MCP is an access mechanism; it does not automatically provide organization-wide discovery or authorization. [6]
+
+For our example, suppose the investigator has three illustrative records:
+
+| Record | What it establishes |
+| --- | --- |
+| Candidate Payments plan | Proposes replacing the endpoint in subnet B |
+| Payments network contract | Documents an inspected database path and an allowance for subnet A |
+| Previous firewall export | Shows the subnet A allowance, but predates the candidate review |
+
+A useful contribution would look like this:
+
+> **Compatibility concern:** the candidate Payments plan selects `10.40.20.0/24`, while the Payments network contract documents database access through a firewall allowance for `10.40.10.0/24`. The available firewall export also covers the old range, but it is stale and cannot establish the current effective policy.
+>
+> **Question for the network owner:** does the effective firewall policy permit Payments' database traffic to subnet B in the target region? Supply the current rule evidence and validate the candidate connection path before approving adoption.
+
+The actual report would link each statement to its plan, contract and export. It should also identify the affected scope and the owner who can resolve the question.
+
+This contribution connects a resource change to an operational assumption. It explains why the available records are insufficient and directs the reviewer to the missing evidence.
+
+Once current configuration is collected, a deterministic check can evaluate the allowance. If it confirms a deny, report that finding. Until then, describe a supported compatibility concern rather than an observed outage.
+
+## Successful CI must still enter the review path
+
+An investigator triggered only by CI failure would miss this example. Every ordinary check passed.
+
+For critical shared repositories, I would use trusted deterministic rules to identify changes that require impact review: defaults, interfaces, networking, identity and deployment scope. Required consumer coverage should also be checked.
+
+Critical candidates enter that path even when CI is green. The classifier identifies the need for review; the investigator helps interpret the context where that extra work is useful.
+
+A complete inventory and comprehensive consumer tests may already answer the question. In that case, running an agent needs an additional, demonstrated benefit. Where records are fragmented, the investigation should make consequential relationships and unresolved questions easier to review.
 
 ![Critical changes receive impact review even after ordinary checks pass. Copilot interprets evidence; a deterministic gate and owners control progression.](./governed-impact-review.svg)
 
-## Governed means the boundaries are enforced
+## Governed means someone owns the decision
 
-For me, the word *governed* has to describe the system around the agent.
+Permissions are part of governance. Responsibility is another part.
 
-The investigator should have access to the evidence it needs within an authorized scope. Cloud plan generation can happen in a separate controlled evaluator, with the agent reading its output. The agent should never inherit cloud deployment credentials just to explain a plan.
+The investigator should read authorized evidence without inheriting deployment authority. Cloud previews can be produced by a separate controlled evaluator. Repository text, logs and tool responses must remain untrusted inputs; instructions inside them must not expand access or redirect outputs.
 
-Repository content, logs, and tool responses must be treated as untrusted evidence. They must not be allowed to expand the investigator's permissions or redirect its outputs.
+GitHub Agentic Workflows documents a separation between agent execution with read-level access and external writes handled through controlled output stages. Correct credentials and configuration are still required. [7]
 
-> [!important] Hard Security Invariants for Agentic Pipelines
-> 1. **Read-Only Investigation:** The agent runs with read-level permissions on approved artifacts and schemas.
-> 2. **Separate Writing Stage:** A dedicated, deterministic workflow stage delivers the report to the PR.
-> 3. **No Autonomous Approvals:** The agent cannot approve PR merges, bypass required checks, or execute cloud deployments.
-> 4. **Candidate SHA Binding:** Checks and reviews are cryptographically bound to the current commit SHA; any new push invalidates previous evidence.
+But a tightly controlled agent can still produce an incorrect interpretation. Consequential findings need validation by the people accountable for the affected systems.
 
-GitHub Agentic Workflows documents a useful permission separation pattern: agent execution uses read-level access, while external writes are handled through separate, controlled output stages. That pattern supports governed investigation, but each installation still needs correctly scoped credentials and configuration. [7]
+In our example, the network owner validates the firewall finding. The Payments owner validates the consumer behavior and readiness for adoption. The shared module maintainer decides whether the release meets its compatibility and documentation requirements. Any acceptance of unresolved risk belongs to the designated change authority under the organization's process, with its scope and conditions recorded.
 
-A report appearing on a pull request is also different from an enforced merge requirement. A required check must validate the current candidate's evidence, coverage, and required approvals. A new commit must not reuse approval for a previous candidate. Missing required evidence should hold the change for review rather than produce an automatic pass.
+The report informs those decisions. It does not make them on the owners' behalf.
 
-The model can support the decision. Repository controls and accountable human owners must enforce it. Consumer deployment gates still matter after the shared release is approved.
+Evidence must be associated with the evaluated candidate and consumer revisions. A candidate SHA identifies the commit; recording it alone does not establish a signed attestation. Relevant changes require fresh evaluation, and approval protections must be configured so reviews of an earlier candidate cannot silently authorize a changed one.
 
-## Does every repository need this?
+A required check should enforce evidence coverage and required approvals for the current candidate. A generated pull request comment cannot enforce that requirement by itself. Missing required evidence should hold the review for resolution or an explicitly authorized exception. Consumer deployment controls still govern the eventual rollout.
 
-I would start with the repositories where shared changes have substantial consequences: networking foundations, identity modules, deployment templates, and common charts used by critical workloads.
+## What I want a green result to tell me
 
-Some repositories have a small dependency graph and comprehensive consumer tests. Deterministic evaluation may already provide the information reviewers need. Adding an agent there needs a clear benefit.
+For a critical shared repository, I want to see the compliance result alongside the consumer impact assessment: what changed, who would adopt it, which assumptions were evaluated, and what still needs an owner's decision.
 
-The stronger case is where a review requires interpretation across several sources, and where that work is currently slow, inconsistent, or easy to miss. Even there, useful consumer records are a prerequisite. An agent cannot compensate for an inventory nobody maintains.
+Governed investigation with Copilot and MCP may help bring that assessment together. Its value is clearer reasoning across fragmented evidence, with findings that reviewers can verify and controls that enforce their decisions.
 
-There is also a practical cost:
-- Collect and normalize evidence before asking the agent to investigate.
-- Bound its tool access, runtime, and retries.
-- Use it to resolve the contextual question that remains, rather than repeatedly fetching information a collector could provide once.
+I would judge it by whether it surfaces important relationships earlier and reduces the work of reconstructing context. That benefit needs to justify its runtime, tool usage and operating cost.
 
-I would measure value by whether reviews become clearer and whether important gaps are surfaced earlier. A longer AI-generated report is not evidence of a better review.
+Part 2 will turn this into an engineering workflow: classify critical changes, collect authorized evidence, expose bounded context through MCP, run the Copilot investigator, and connect the result to an enforced review gate.
 
-## What I want the next check to mean
+For now, take one shared module your organization depends on. If its default changed tomorrow, could you show which consumers would inherit it and which production assumptions would need review?
 
-When a shared-module pull request is green, I want to understand both the compliance result and the consumer impact evidence behind the proposed release.
-
-Which consumers would adopt it? Which inputs change? Which scopes were assessed? What remains unknown? Who needs to review the result before release or deployment?
-
-Governed investigation with GitHub Copilot and MCP can help bring those answers together. Its usefulness depends on the evidence available and the controls that turn that evidence into an accountable review.
-
-In the next article, I will build that path step by step: classify critical changes, collect authorized consumer evidence, expose bounded context through MCP, run the Copilot investigator, and connect its report to an enforced review gate.
-
-For now, the question I want to leave with platform teams is simple: **when your policy checks are green, how much of the downstream impact have you actually assessed?**
+That is the question the green ticks may still leave open.
 
 ## Explore the scenario
 
-Switch between the risk path, consumer evidence, and governed review below. The interactive workbench demonstrates the proposed pattern:
+Switch between the risk path, consumer evidence and governed review below. The interactive workbench demonstrates the proposed pattern:
 
 <div class="interactive-diagram-container" style="margin: 2.5rem 0 1.5rem 0; width: 100%;">
   <iframe 
@@ -219,6 +232,8 @@ Switch between the risk path, consumer evidence, and governed review below. The 
 5. [HashiCorp: Dependency lock file and its scope](https://developer.hashicorp.com/terraform/language/files/dependency-lock).
 6. [GitHub Agentic Workflows: Using MCP servers](https://github.github.com/gh-aw/guides/mcps/).
 7. [GitHub Agentic Workflows: Security architecture and permission separation](https://github.github.com/gh-aw/introduction/architecture/).
+8. [Microsoft Learn: Private endpoint addressing and network policies](https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-overview).
+9. [Microsoft Learn: Inspecting private endpoint traffic with Azure Firewall](https://learn.microsoft.com/en-us/azure/private-link/inspect-traffic-with-azure-firewall).
 
 ## Related Posts
 
