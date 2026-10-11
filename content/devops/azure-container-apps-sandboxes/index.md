@@ -1,495 +1,264 @@
 ---
-title: "Your Agent Needs a Boundary: Azure Container Apps Sandboxes for Governed CI"
+title: "Your Agent Needs a Boundary: Taking a Governed CI Investigator to Azure Sandboxes"
 date: 2026-10-11
-tags: [azure, container-apps, sandboxes, platform-engineering, agentic-ai, cicd, governance, mcp]
-description: "A practical deep dive into Azure Container Apps Sandboxes, their GA release, pricing, NVIDIA OpenShell comparison, and a governed CI investigation architecture."
-draft: false
+tags:
+  - azure
+  - devops
+  - platform-engineering
+  - github-actions
+  - agentic-ai
+description: "An engineering feasibility look at moving a governed CI investigator into Azure Container Apps Sandboxes, without losing its existing controls."
 ---
 
 ![Azure Container Apps Sandboxes — isolated workspaces for agent execution](./azure-sandboxes-cover.jpg)
 
 Give an agent a failed pipeline, a terminal, and enough access, and it can do quite a lot.
 
-That is useful. It is also where I start asking a different set of questions. What can it reach? Which credentials can it use? Where does its work run, and what do we retain when that environment disappears?
+Then try moving that agent into a more controlled environment. Suddenly, the interesting questions are about Docker, runner registration, network inspection, credentials, and what happens when someone cancels the workflow halfway through.
 
-I have been playing with Azure Container Apps Sandboxes around CI pipelines, governance, and investigation. What interests me is having a workspace where an agent can inspect evidence and run commands, with boundaries that the platform team can actually operate.
+That is where my Azure Container Apps Sandboxes exploration has been heading.
 
-Because once an agent starts executing things, the platform around it becomes part of the solution.
+I have a CI investigation project built around GitHub Agentic Workflows, Copilot, and read-only policy context. The next question is whether I can move its investigation job into an isolated Azure workspace while preserving the controls around it.
 
-> [!note] Release timeline
-> Azure Container Apps Sandboxes entered public preview on **June 2, 2026**, and Microsoft announced **general availability on September 23, 2026**. This article reflects the documentation checked on October 11, 2026. Some SDK, CLI, and ARM API versions can still carry preview labels independently of the service's GA status.
->
-> Sources: [public preview announcement](https://techcommunity.microsoft.com/blog/appsonazureblog/introducing-azure-container-apps-sandboxes-secure-infrastructure-for-agentic-wor/4524131) and [GA announcement](https://techcommunity.microsoft.com/blog/appsonazureblog/azure-container-apps-sandboxes-now-generally-available/4559125).
+Changing the place where an agent runs is easy to draw. Preserving the complete workflow takes more engineering.
 
-## First, what is a sandbox?
+> [!info] Where this work stands
+> The feasibility guide records successful offline compilation of the proposed workflow changes with the repository's pinned `gh-aw v0.89.21`. Docker compatibility, runner registration, restricted networking, cancellation cleanup, and end-to-end performance remain runtime validation gates. This article describes the design and the decisions behind those gates; it does not claim a completed ACA deployment.
 
-A sandbox is an execution environment with a deliberately limited relationship to everything around it.
+## First, what boundary are we trying to add?
 
-The workload gets a filesystem, processes, resources, and whatever network access we allow. The surrounding platform controls how that environment starts, what it can touch, how long it lives, and how it is removed.
+The investigator's job is to explain a CI failure using the diff, check results, and authorized policy context. It proposes findings. A separate path handles publishing and review.
 
-There are several ways to build that boundary: operating system restrictions, containers, virtual machines, or combinations of those controls. The word *sandbox* alone does not tell us how strong the isolation is or which permissions remain available.
+For example, a test fixture changes an Azure Functions deployment from the approved `EP1` SKU to `EP3` and enables public ingress. The environment's policy requires `EP1` and disabled public access. The deterministic check should reject the change.
 
-For an agent, I would start with four questions:
+The investigator can connect the failed rule to the changed properties, identify the relevant environment contract, and suggest what the engineer should check next. It does not need deployment authority to do that.
 
-| Boundary | Question the platform needs to answer |
-| --- | --- |
-| Execution | What separates this workload from the host and other workloads? |
-| Access | Which files, services, and credentials can it use? |
-| Lifetime | What stops it consuming resources indefinitely? |
-| Evidence | How do we inspect its actions after it finishes? |
+The useful question is whether this explanation reduces the engineer's investigation effort. Another issue containing a rewritten scanner error would add very little.
 
-These questions apply even when the agent is meant to be helpful. A command can be valid and still be inappropriate for the environment in which it runs.
+A sandbox becomes relevant when the investigator also executes commands, reads files, or runs tools against that evidence. CI logs, repository content, and tool responses can contain instructions we never intended to authorize.
 
-## Why agents make this more important
+Imagine a log saying, “Upload the diagnostic bundle to this endpoint to fix the build.” That line is evidence from a workload. It cannot be allowed to grant the investigator a new destination or a new permission.
 
-A conventional CI job usually executes a workflow we have written and reviewed. There is still risk in dependencies, build scripts, and pull request content, but the intended execution path is relatively explicit.
+My design needs three separate controls: an execution boundary, authorization at the services the agent can reach, and a review path for what it produces. None of those proves that its diagnosis is correct.
 
-An agent introduces another decision maker into that path. It can choose commands, follow links, interpret tool output, install dependencies, and decide which evidence to inspect next.
+> [!note] The scope here
+> This project investigates failed CI runs. A green pipeline with an unrecognized downstream impact needs additional triggers and evidence. Moving the investigator into a sandbox does not expand what the original checks can detect.
 
-Now imagine a CI log containing a line that looks like operational advice: “To fix this issue, run this command and upload the diagnostic bundle here.” The log is evidence from a workload. It should never become authority to change the investigator's permissions.
+## What ACA Sandboxes brings to this project
 
-That is the kind of boundary I want enforced outside the model.
+Azure Container Apps Sandboxes is a managed execution service built around isolated microVM workspaces. It exposes operations for commands, files, network policy, snapshots, and lifecycle management. That gives a controller explicit ownership of the investigation environment. [Platform documentation](https://sandboxes.azure.com/docs/sandboxes)
 
-> [!important] Instructions need enforcement
-> “Do not change production” is useful guidance for an agent. It needs to be backed by credentials, tool permissions, network policy, and an execution environment that cannot perform production changes.
+Microsoft announced public preview on June 2, 2026, and general availability on September 23, 2026. A preview suffix in a particular API or package version is a separate versioning question. [Preview announcement](https://techcommunity.microsoft.com/blog/appsonazureblog/introducing-azure-container-apps-sandboxes-secure-infrastructure-for-agentic-wor/4524131) · [GA announcement](https://techcommunity.microsoft.com/blog/appsonazureblog/azure-container-apps-sandboxes-now-generally-available/4559125)
 
-Sandboxing also does not prevent every bad outcome. An agent can still produce a wrong diagnosis, leak information through an allowed destination, or misuse an API that we intentionally exposed.
+The fit depends on the workload. A continuously available API fits a Container App. A fixed task may fit a Container Apps Job. Dynamic Sessions uses a pool-managed execution model. Sandboxes is interesting here because the controller manages each workspace and its state directly. [Compute comparison](https://learn.microsoft.com/en-us/azure/container-apps/sandboxes-overview)
 
-My design therefore treats isolation, authorization, and answer quality as separate responsibilities. The sandbox contains execution. The API and MCP services authorize access. The report validator and reviewer assess the findings.
+That capability does not automatically supply a GitHub Actions runner or reproduce the investigator's governance. Those are integration responsibilities.
 
-## What Azure Container Apps Sandboxes gives us
+### Where NVIDIA OpenShell fits
 
-Azure describes ACA Sandboxes as on-demand **microVMs**, each with its own kernel. We can start from an OCI image, execute commands, transfer files, and control the workspace through the portal, CLI, SDKs, or REST APIs. Microsoft advertises sub-second startup and restore; that is a platform capability to benchmark with our own image and workload, rather than a promise about total investigation time. [Sandbox platform overview](https://sandboxes.azure.com/docs/sandboxes)
+OpenShell addresses agent execution through an open-source runtime, policy, and supervision model. ACA Sandboxes supplies managed Azure compute with workspace controls. OpenShell's execution boundary depends on its chosen backend and deployment. [OpenShell architecture](https://docs.nvidia.com/openshell/about/architecture) · [Isolation backends](https://docs.nvidia.com/openshell/extensibility/isolation-backends)
 
-The useful part for my scenario is explicit ownership of the workspace lifecycle. I can create a workspace for an investigation, keep it while the task needs it, collect the result, and then stop or delete it.
+For this Azure-based project, ACA is a reasonable candidate to evaluate. A requirement for direct control of the runtime and its filesystem or process policy could lead to an OpenShell evaluation instead.
 
-The main objects are straightforward:
+I have not benchmarked their security or performance against each other. The project needs a workable boundary and a maintainable operating model; a feature comparison alone cannot establish either.
 
-| Object | Role |
-| --- | --- |
-| Sandbox group | Regional management boundary for related workspaces and resources |
-| Sandbox | Individual isolated execution environment |
-| Disk image | Root filesystem prepared from an OCI image |
-| Snapshot | Captured state for restore or cloning |
-| Volume | Storage whose lifetime can extend beyond one execution |
+## The first decision: move the runner or remote the investigation?
 
-Azure has an ARM control plane for sandbox groups and a separate data plane for individual sandbox operations. That distinction matters for RBAC and automation: creating an Azure resource does not automatically prove that the caller has permission to execute commands in it. [Sandbox group and RBAC guide](https://sandboxes.azure.com/docs/sandboxes/sandbox-groups)
+The feasibility work separates two implementation paths.
 
-### Where it fits alongside Apps, Jobs, and Dynamic Sessions
+| Path | What runs in ACA | What stays outside | Main engineering responsibility |
+| --- | --- | --- | --- |
+| **Option A: ephemeral Actions runner** | The gh-aw agent job and its required runtime components | Provisioning, threat detection, and safe-output publishing | Preserve the existing workflow while proving runner and Docker compatibility |
+| **Option B: remote investigator** | A headless investigator receiving a bounded evidence bundle | Actions orchestration, validation, and publishing | Implement and maintain the controls no longer supplied by the existing gh-aw execution path |
 
-| Option | I would reach for it when… |
-| --- | --- |
-| Container App | I need a continuously available service or API |
-| Container Apps Job | I need a defined task that runs to completion |
-| Dynamic Sessions | I want pool-managed isolated execution behind a session endpoint |
-| Sandboxes | I need to manage an individual workspace, its files, state, and lifecycle |
+Option A is the first candidate because it aims to preserve more of the existing workflow. A trusted job creates a fresh ACA workspace, registers a runner for one job, and lets the agent job execute there.
 
-The key difference between Dynamic Sessions and Sandboxes is the control model. With Sandboxes, the individual environment is something my application manages explicitly. [Compute option comparison](https://learn.microsoft.com/en-us/azure/container-apps/sandboxes-overview)
+Option B changes the integration more substantially. GitHub Actions prepares evidence, sends it to ACA, starts the investigator, and retrieves its proposed result. The hosted controller then validates and publishes through its own controlled path.
 
-For a simple fixed scanner execution, a Job may already meet the need. For an investigator that executes several commands, accumulates local context, and may pause between steps, the sandbox model becomes more interesting.
+Option B may reduce runner dependencies, but it creates work around output handling, detection, budgets, retries, and audit. Choosing it means accounting for those responsibilities explicitly.
 
-## Azure Sandboxes and NVIDIA OpenShell
+The fallback needs its own acceptance criteria. It cannot become “run Copilot remotely and trust the output.”
 
-NVIDIA OpenShell addresses the same broad problem: agents need useful capabilities without unrestricted access.
-
-Its documentation describes an open-source runtime with declarative policy across filesystem, network, process, and provider access. The current Linux implementation uses controls including Landlock and seccomp, with policy decisions handled outside the agent workload. [OpenShell overview](https://docs.nvidia.com/openshell/about/overview)
-
-I would compare the operating models before trying to declare a winner.
-
-| Area | Azure Container Apps Sandboxes | NVIDIA OpenShell |
-| --- | --- | --- |
-| Product model | Azure-managed sandbox compute service | Open-source agent runtime and policy system |
-| Execution boundary | Managed microVM with its own kernel | Depends on the selected runtime and isolation backend |
-| Access controls | Sandbox egress policies, Azure identities, networking, and service authorization | Declarative file, process, network, and provider policies |
-| Lifecycle | Managed APIs for workspaces, suspend/resume, and snapshots | Runtime-managed agent workspaces; capabilities depend on deployment |
-| Operations | Azure operates the underlying service | Your deployment determines infrastructure and operational ownership |
-| Cost model | Azure resource meters plus supporting services | Infrastructure, model usage, and operating effort for your deployment |
-| Likely fit | Azure-based teams wanting managed isolated compute | Teams needing direct control of the agent runtime and policy implementation |
-
-OpenShell's architecture separates the untrusted workload from a trusted supervisor. Its documented runtimes include Docker, Podman, Kubernetes, and VM patterns, with different mechanisms for enforcing the boundary. It would be inaccurate to describe every OpenShell sandbox as having the same microVM isolation as ACA Sandboxes. [OpenShell architecture](https://docs.nvidia.com/openshell/about/architecture)
-
-OpenShell also exposes an isolation backend interface, so the policy and supervision model is distinct from the underlying compute mechanism. [Isolation backends](https://docs.nvidia.com/openshell/extensibility/isolation-backends)
-
-My preference for an Azure-based CI investigation service would be to start with ACA Sandboxes and measure whether its controls meet the threat model. If the requirement is deeper control over filesystem and process policy, or an operating model outside Azure, I would evaluate OpenShell directly.
-
-This is an architectural judgment, not a comparative security benchmark. I would test each against the same misuse cases, permitted APIs, and data handling requirements.
-
-## The governed CI investigation architecture I would build
-
-The pattern I am interested in is simple to describe: the pipeline establishes what failed, and the investigator helps explain it.
+## A workflow diagram needs permission boundaries too
 
 ![A bounded investigation workspace with human review kept separate](./governed-investigation.jpg)
 
-The following is a **proposed reference architecture**, not a claim that Azure provides the entire workflow automatically.
+The existing illustration captures the intended separation: investigation happens inside a bounded workspace, while review remains outside. For the implementation, I also need to show which component has authority.
 
 ```mermaid
 flowchart TD
-    PR["Pull request"] --> CI["Trusted CI controller"]
-    Policy["Approved policy version"] --> Checks["Deterministic checks"]
-    CI --> Checks
-    CI --> Bundle["Sanitized evidence bundle"]
-    Bundle --> Sandbox["Investigation sandbox"]
-    MCP["Read-only MCP context"] --> Sandbox
-    Sandbox --> Report["Validated findings"]
-    Checks --> Gate["Required PR check"]
-    Report --> Review["Human review"]
-    Gate --> Review
-    Review --> Deploy["Separate deployment workflow"]
+    Failure["Failed CI run"] --> Controller["Trusted hosted controller"]
+    Controller --> Sandbox["ACA workspace: agent job"]
+    Evidence["Evidence and read-only MCP"] --> Sandbox
+    Sandbox --> Proposed["Proposed findings artifact"]
+    Proposed --> Validation["Hosted validation and detection"]
+    Validation --> Writer["Hosted safe-output writer"]
+    Writer --> Review["Engineer review"]
+    Controller --> Cleanup["Cleanup and reconciliation"]
 ```
 
-I would make the responsibilities explicit.
+This is the proposed Option A separation. ACA does not generate the surrounding workflow automatically.
 
-| Component | Responsibility |
+The hosted controller uses narrowly scoped Azure access to manage workspaces. A GitHub App supports runner registration. Neither the App's private key nor the controller's provisioning credentials belong in the agent environment.
+
+However, the runner still needs authentication material, and the investigator may need a read token. Calling this a “credential-free sandbox” would be misleading.
+
+| Component | Intended authority |
 | --- | --- |
-| Trusted controller | Create the workspace, supply evidence, collect output, clean up |
-| Deterministic checks | Enforce rules such as approved SKUs and ingress requirements |
-| Investigator | Explain failures and propose next steps with evidence |
-| Read-only MCP service | Return authorized policy, ownership, and investigation context |
-| Validator | Check report structure, provenance, size, and required references |
-| Reviewer and deployment workflow | Decide and execute the approved change |
+| Hosted provisioner | Manage the designated sandbox resources and register the ephemeral runner |
+| Sandboxed investigator | Read authorized evidence and policy context; propose findings |
+| Hosted validation and detection | Check the proposed output before publication |
+| Hosted safe-output writer | Perform the explicitly permitted GitHub write operation |
+| Deployment workflow | Separately approved deployment authority |
 
-The investigator should not receive the controller's permission to create sandbox groups, change egress policy, or assign Azure roles. Those permissions belong to the service that manages the investigation.
+“Read-only” describes the investigator's service permissions. It does not mean its local filesystem or Docker runtime is read-only. Those are different boundaries.
 
-### A realistic failure example
+Runner routing also matters. A label selects eligible runners; it should not be treated as proof that only the approved workflow can target one. The organizational design needs appropriate runner-group restrictions and trusted workflow references.
 
-Suppose a Bicep change switches an approved SKU and enables public ingress. The required policy check fails, and the engineer sees a short error among several scanner outputs.
+## Docker is the first compatibility gate
 
-For a lab, I would give the investigator a fixture containing the diff, failing check output, scanner results, and a trusted policy version. The MCP service could expose functions such as:
+The existing workflow brings runtime dependencies with it. GitHub documents Linux and Docker requirements for gh-aw self-hosted runners. [Self-hosted runner requirements](https://github.github.com/gh-aw/reference/self-hosted-runners/)
 
-```text
-get_investigation_context(run_id)
-get_deployment_policy(service_id, policy_version)
-get_service_ownership(service_id)
-get_approved_skus(environment)
-```
+The guide starts by checking whether Docker can start, run a container, and create an internal network inside the ACA workspace. That is a useful early gate.
 
-These are application-level tool contracts I would implement. They are not built-in ACA Sandbox APIs.
+It is not the finish line.
 
-The report should connect each finding to evidence: the changed file and lines, the failing check, the policy rule, and the applicable environment. “The deployment is insecure” is too vague to be useful.
+The investigator needs its actual firewall, MCP gateway, container images, filesystem mounts, and output transfer to work together. A successful `hello-world` run does not exercise that stack.
 
-I would expect something like this from the lab fixture:
+Similarly, a failed first Docker setup needs diagnosis before it becomes a statement that ACA cannot support the architecture. An image configuration error and an unavailable runtime capability lead to different decisions.
 
-| Finding | Required support |
-| --- | --- |
-| Requested SKU is outside the approved list | Diff reference and policy rule |
-| Public ingress violates the environment contract | Changed property and rule reference |
-| Owning team should review remediation | Authorized ownership record |
-| Suggested fix requires another CI run | Explicit next step without claiming deployment success |
+> [!important] Test the workload you intend to operate
+> The acceptance test is the complete pinned investigator under the intended restrictions. A shell smoke test, a successful compiler run, and a successful Docker container are earlier milestones.
 
-The agent adds value by connecting evidence across tools and explaining the consequence. The deterministic check still owns the pass/fail decision for a deterministic rule.
+The compile result does help. The guide records that the proposed job placement compiles with `gh-aw v0.89.21`: the agent targets the sandbox runner, while provisioning, detection, and publishing remain hosted.
 
-> [!tip] Keep the first investigation small
-> Prepare one bounded evidence bundle and a small read-only tool surface. Measure whether the investigator improves diagnosis time before allowing broad repository exploration or repeated API calls.
+That establishes how the compiler interpreted the configuration. It leaves runtime behavior to prove.
 
-## Getting a first sandbox running
-
-The portal is the quickest way to explore. Open [sandboxes.azure.com](https://sandboxes.azure.com), create a sandbox group, create a standard Ubuntu sandbox, and open its interactive shell. The portal also offers agent-oriented templates, including GitHub Copilot and Claude sandboxes. [Portal quickstart](https://sandboxes.azure.com/docs/sandboxes/quickstart/setup-portal) · [Sandbox creation guide](https://sandboxes.azure.com/docs/sandboxes/sandboxes)
-
-You need an Azure subscription, a Microsoft Entra ID account, and the **Container Apps SandboxGroup Data Owner** role covering the group. Personal Microsoft accounts are not supported by the documented portal flow. [Microsoft Learn quickstart](https://learn.microsoft.com/en-us/azure/container-apps/sandboxes-quickstart-portal)
-
-For repeatable experiments, I prefer the CLI.
-
-> [!note] About the examples
-> The commands below follow the current official documentation. They have not been executed against a live Azure subscription for this article. Check your installed CLI version and use a dedicated lab resource group.
-
-### Install and provision
-
-The sandbox quickstart uses the **`aca` CLI**, alongside Azure CLI authentication.
-
-```bash
-# Official ACA CLI installation for macOS/Linux.
-curl -fsSL https://aka.ms/aca-cli-install | sh
-
-aca --version
-az login
-
-# Select the intended subscription before creating resources.
-az account set --subscription "<YOUR_SUBSCRIPTION_ID>"
-
-LAB_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
-LAB_REGION="southeastasia"
-LAB_RESOURCE_GROUP="rg-aca-sandbox-lab"
-LAB_SANDBOX_GROUP="ci-investigation-lab"
-
-az group create \
-  --name "$LAB_RESOURCE_GROUP" \
-  --location "$LAB_REGION"
-
-aca sandboxgroup create \
-  -g "$LAB_RESOURCE_GROUP" \
-  --name "$LAB_SANDBOX_GROUP" \
-  --location "$LAB_REGION" \
-  -s "$LAB_SUBSCRIPTION_ID" \
-  --set-config
-
-aca doctor
-```
-
-`--set-config` saves the group context for subsequent commands. Group creation attempts to grant the signed-in user data-plane access; `aca doctor` helps identify missing access if that assignment fails. [CLI quickstart](https://sandboxes.azure.com/docs/sandboxes/quickstart/setup-cli)
-
-Southeast Asia is listed as supported at the time of writing. Choose a region based on latency, data residency, and where your controller, model endpoint, and evidence live. [Supported regions](https://sandboxes.azure.com/docs/sandboxes/regions)
-
-### Create with the boundary already configured
-
-Here is an intentionally offline smoke test. It does not require a model, MCP server, or repository token.
-
-```bash
-LAB_SELECTOR="name=ci-lab-$(date -u +%Y%m%d%H%M%S)"
-
-aca sandbox create \
-  --disk ubuntu \
-  --cpu 1000m \
-  --memory 2048Mi \
-  --label "$LAB_SELECTOR" \
-  --egress-default Deny \
-  --traffic-inspection Full
-
-aca sandbox exec -l "$LAB_SELECTOR" -c \
-  "printf 'Sandbox execution works\n'; uname -a"
-
-aca sandbox egress show -l "$LAB_SELECTOR"
-
-aca sandbox exec -l "$LAB_SELECTOR" -c \
-  "curl --fail --silent --show-error --connect-timeout 5 --max-time 10 https://example.com"
-```
-
-The local command should work. The outbound request should fail under the deny policy; if `curl` is unavailable in the chosen image, that is a tool availability failure rather than proof that egress was blocked. Inspect the policy and network decision records when validating the boundary.
-
-Resource flags come from the [creation guide](https://sandboxes.azure.com/docs/sandboxes/sandboxes); create-time network flags come from the [egress guide](https://sandboxes.azure.com/docs/sandboxes/sandbox/egress).
-
-> [!warning] Isolation does not mean outbound traffic is denied
-> The current egress documentation says that a sandbox without an egress policy has **unrestricted outbound access**. Configure the policy at creation time, before introducing untrusted code or evidence.
-
-For a connected investigator, add only the required model and MCP endpoints. An allowed hostname is still an allowed destination for potentially sensitive data, so endpoint authorization and request scope matter too.
-
-### Cleanup is part of the workflow
-
-After collecting anything you need:
-
-```bash
-aca sandbox delete -l "$LAB_SELECTOR" --yes
-```
-
-Keep production cleanup in a controller `finally` path, and add a separate scheduled cleanup process for abandoned executions. A cancelled CI job can prevent ordinary cleanup code from running.
-
-> [!caution] Removing the whole lab
-> The following command deletes the resource group and everything in it. Use it only for the dedicated lab group created above.
-
-```bash
-az group delete --name "$LAB_RESOURCE_GROUP" --yes --no-wait
-```
-
-## Make the platform configuration repeatable
-
-Once the smoke test works, the sandbox group should become an infrastructure module.
-
-The current documented Bicep quickstart uses `Microsoft.App/sandboxGroups@2026-02-01-preview`. It supports group resource defaults, a maximum sandbox count, identity, and data-plane role assignments. The API version suffix should not be confused with the service release announcement. [Bicep quickstart](https://sandboxes.azure.com/docs/sandboxes/quickstart/setup-bicep)
-
-A small starting template looks like this:
-
-```bicep
-param location string = 'southeastasia'
-param sandboxGroupName string = 'ci-investigation-lab'
-
-resource sandboxGroup 'Microsoft.App/sandboxGroups@2026-02-01-preview' = {
-  name: sandboxGroupName
-  location: location
-  tags: {
-    environment: 'lab'
-    owner: 'platform'
-  }
-  properties: {
-    defaultCpu: '1'
-    defaultMemory: '2Gi'
-    defaultDisk: '20Gi'
-    maxSandboxCount: 5
-    defaultTimeoutSeconds: 1800
-  }
-}
-
-output sandboxGroupId string = sandboxGroup.id
-```
-
-This creates the group; it does not establish a complete enterprise security baseline. My module would also define the appropriate identities, role assignments, connectivity, and operating limits, while the trusted controller supplies the per-workspace execution policy.
-
-Azure supports managed identities at the sandbox group level. Grant only the downstream Azure permissions the workload requires; a managed identity is still a permission-bearing identity. [Identity guide](https://sandboxes.azure.com/docs/sandboxes/identity)
-
-### Integrating with GitHub Actions
-
-I would provision the group separately and let a trusted workflow create individual investigation workspaces.
-
-GitHub Actions can authenticate to Azure with OIDC rather than a stored long-lived Azure credential. The Azure trust configuration must restrict which repository and workflow context can obtain that access. [GitHub OIDC for Azure](https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-azure)
-
-The job needs explicit permissions:
+A shortened fragment illustrates the placement intent:
 
 ```yaml
-permissions:
-  contents: read
-  id-token: write
+# Fragment only: retain the workflow's existing output configuration.
+runs-on: [self-hosted, linux, x64, aca-sandbox]
+
+safe-outputs:
+  runs-on: ubuntu-slim
+  threat-detection:
+    runs-on: ubuntu-latest
 ```
 
-That is a permissions fragment, not the complete integration. The controller still needs an approved image, evidence transfer, the investigator entrypoint, result validation, and cleanup.
+GitHub's current documentation says threat detection otherwise follows the agent's runner by default. Explicit placement therefore matters for this design. The generated lockfile from the pinned compiler remains the configuration to review before execution. [Detection runner configuration](https://github.github.com/gh-aw/reference/self-hosted-runners/#configuring-the-detection-job-runner)
 
-I would keep untrusted pull request code out of the credentialed controller process. It goes into the sandbox as data or as explicitly permitted code to execute. Any report publishing credentials stay outside that workspace.
+## Two network boundaries need one coherent policy
 
-## Networking and credentials deserve their own design
+Option A has an outer ACA egress policy and an inner agent workflow firewall. The intended result is that the agent can reach only the destinations permitted through both layers.
 
-ACA Sandboxes supports VNet connectivity for outbound access to private resources and private endpoints for inbound connectivity. These solve different directions of traffic. Adding a VNet connection should not be treated as proof that public inbound access has been removed. [VNet guide](https://sandboxes.azure.com/docs/sandboxes/sandbox/vnet) · [Private endpoints](https://sandboxes.azure.com/docs/sandboxes/private-endpoints)
+But the full runner environment needs more than a model endpoint. Registration, job delivery, image pulls, artifact transfer, and authorized tools all introduce network dependencies.
 
-For the first investigator, I would expose no inbound application port. The controller can use the management interface to execute commands and transfer evidence.
+The guide's proposed allow-list is a starting point for testing. Broad GitHub or Azure Storage wildcards need particular attention. An allowed shared domain does not establish that every reachable resource is an approved destination.
 
-Credential handling also varies by feature. The platform supports egress credential injection, while its AI provider credential guide describes group-level connections that inject configured tokens for tooling at startup. Do not assume every integration keeps its credentials outside the agent process. [Provider credential guide](https://sandboxes.azure.com/docs/sandboxes/credentials)
+I want to record which component requested each host, why it needs access, and whether the access can be narrowed. Network decision logs can support that work.
 
-My baseline would keep production credentials out entirely. A read-only investigator may need model access and a scoped MCP credential; it does not need the identity used to deploy the application.
+### The policy must exist before the workspace starts
 
-### Dynamic policy callbacks
+Microsoft documents setting egress policy in the create request so it is active at startup. Updating a running workspace affects subsequent requests. [Egress policy model](https://learn.microsoft.com/en-us/azure/container-apps/sandboxes-egress-policies)
 
-The egress proxy can call an external webhook when a matching rule uses `hookRef` instead of a static action. This allows request-time decisions, such as tenant authorization or dynamic routing. Its documented `failBehavior` can be `Deny` or `Allow`. [Egress webhook guide](https://sandboxes.azure.com/docs/sandboxes/sandbox/egress/webhook)
+That distinction changes the provisioning design. The guide's sketch creates a workspace from a warm snapshot and applies restrictions afterward. I would revise that sequence before running the investigator.
 
-For a governed workflow, I would choose fail-closed behavior and authenticate the policy callback. The policy service should establish identity from trusted context rather than accepting an agent-supplied tenant label as authority.
+A restored environment may already contain running processes. “We set deny rules before launching the agent” is weaker than starting the entire workspace under the intended policy.
 
-I would begin with static rules. A synchronous policy callback adds another dependency, and its availability becomes part of the investigation's availability.
+### Inspection changes need an explicit decision
 
-## Suspend, resume, and evidence retention
+The guide proposes testing full inspection and investigating partial inspection if TLS failures appear. That remains an unverified compatibility question.
 
-Sandboxes can preserve disk state and optionally memory when stopped. Lifecycle policy can auto-suspend idle workspaces and remove stopped workspaces after a configured interval. [Lifecycle guide](https://sandboxes.azure.com/docs/sandboxes/sandbox/lifecycle)
+If a change makes the workflow run, I still need to establish what enforcement changed. The engineering record should include the failed request, the cause, the revised control, and the remaining exposure. A successful rerun alone is incomplete evidence.
 
-```mermaid
-stateDiagram-v2
-    [*] --> Running: Create
-    Running --> Stopped: Suspend
-    Stopped --> Running: Resume
-    Running --> Deleted: Delete
-    Stopped --> Deleted: Delete
-    Deleted --> [*]
-```
+## Snapshots: useful acceleration, another lifecycle to manage
 
-This diagram shows the main operating lifecycle; the service also documents a Disabled state.
+The proposed baseline contains Docker, the runner software, and approved runtime images. A prepared snapshot could avoid repeating setup for every investigation.
 
-For disposable CI investigations, I would normally export the report and remove the workspace. For an interactive investigation, resume can be useful while an engineer supplies additional context.
+The guide estimates a saving of roughly 60–90 seconds of image pulls. I would treat that as a hypothesis until cold and prepared runs are measured under the same conditions.
 
-A retained snapshot also needs a retention decision. Memory and disk can contain source code, logs, credentials, or sensitive customer data.
+A reusable baseline should be captured before registration, repository evidence, or investigation credentials enter it. Per-run state needs a fresh workspace and a separate retention decision.
 
-> [!tip] A snapshot is useful context, not a guaranteed replay
-> Restoring state does not make external APIs, time-dependent commands, or model responses deterministic. Record the evidence hash, image digest, policy version, and model configuration separately.
+Azure documents that create-from-snapshot uses the snapshot's captured resource allocation. Comparing different sizes therefore needs appropriately prepared baselines, rather than assuming one snapshot can be resized during cloning. External connections and tokens also need validation after restore. [Snapshot and lifecycle considerations](https://learn.microsoft.com/en-us/azure/container-apps/sandboxes-snapshots-state-management)
 
-## Observability: what actually happened inside?
+An approved baseline needs an owner, pinned inputs, a rebuild process, and an expiry policy. Otherwise, yesterday's optimization becomes tomorrow's stale runtime.
 
-This is one of the more useful parts for a platform team. A workspace can be temporary while its operational record remains available.
+## Cancellation is a real architecture test
+
+The normal path is straightforward: provision, investigate, retrieve the result, publish through validation, and delete the workspace.
+
+Then someone cancels the run after registration but before the runner starts. Or provisioning creates an Azure resource and fails before recording its ID. Or the cleanup job cannot authenticate.
+
+Those cases leave state in two systems: Azure and GitHub.
+
+The controller needs a durable investigation identifier linking the CI run and attempt, workspace, and runner registration. Cleanup should tolerate resources already being absent, and a separate scheduled reconciler should find abandoned resources when the workflow cannot finish.
+
+Auto-suspend and auto-delete are distinct controls. Suspending a workspace does not establish that its state has been removed. [Lifecycle policy](https://learn.microsoft.com/en-us/azure/container-apps/sandboxes-snapshots-state-management)
+
+For a disposable investigation, I want explicit deletion plus a recovery path. The investigation should also remain outside the deterministic CI gate: its unavailability must not turn a failed deployment check into a pass.
+
+## Keep an operational record outside the agent
 
 ![Sandbox observation — retain logs, network decisions, and investigation evidence](./sandbox-observability.jpg)
 
-Azure documents four export categories: `ContainerStdoutStderr`, `ContainerOtel`, `Metrics`, and `NetworkEgressDecisions`. Destinations include OTLP-compatible backends, Log Analytics, and Application Insights. Export is configured per sandbox using `telemetryConfig`. [Logging guide](https://sandboxes.azure.com/docs/sandboxes/telemetry)
+The report tells me what the investigator concluded. The operational record should help explain how it reached that conclusion and whether the platform enforced the intended boundary.
 
-> [!important] Telemetry export is opt-in
-> Omitting `telemetryConfig` means no telemetry is exported through that feature. Network decision export and network enforcement are separate settings.
+ACA supports telemetry export for container output, OpenTelemetry signals, operational metrics, and network egress decisions. Export is configured per workspace through `telemetryConfig`; omitting it means that feature exports no telemetry. [Logging documentation](https://sandboxes.azure.com/docs/sandboxes/telemetry)
 
-An illustrative configuration fragment is:
+My investigation record should link the run ID, commit, evidence hash, policy version, runtime image digests, sandbox ID, proposed findings, validation result, duration, model usage, and cleanup status.
 
-```json
-{
-  "telemetryConfig": {
-    "metricsIntervalSeconds": 15,
-    "endpoints": [
-      {
-        "kind": "OTLP",
-        "data": [
-          "ContainerStdoutStderr",
-          "ContainerOtel",
-          "Metrics",
-          "NetworkEgressDecisions"
-        ],
-        "endpoint": "https://collector.example.net/otlp",
-        "protocol": "Grpc"
-      }
-    ]
-  }
-}
-```
+For Option B, the controller can record each remote command it submits. For Option A, it also needs the Actions and agent runtime records because the runner executes the job internally. Controller API calls alone cannot describe all activity inside the workspace.
 
-Replace the collector and configure its required authentication before use.
+Keep these records outside the investigator's write authority and decide what must be redacted before retention.
 
-Azure Monitor also exposes group CPU and memory allocation metrics. Per-sandbox allocation metrics require `properties.enableDetailedMetrics: true`. These metrics measure **assigned resources**, not utilization percentages or billed CPU-seconds. [Metrics guide](https://sandboxes.azure.com/docs/sandboxes/metrics)
+Output validation needs similar precision. Checking JSON structure, size, references, and provenance does not prove a finding is correct. The reviewer still needs evidence that supports the proposed explanation.
 
-My investigation record would correlate the CI run ID, commit SHA, sandbox ID, policy version, image digest, command results, network denials, report references, duration, and model usage.
+## What I need to prove before choosing a path
 
-Container logs alone are not a complete command audit trail. The controller should record each command it submits and the corresponding result. Protect that record from modification by the agent, and avoid retaining secrets in either prompts or logs.
+The feasibility guide is useful because it exposes decisions that a product diagram hides. Its open gates become the pilot's acceptance criteria.
 
-## Pricing: what are we paying for?
-
-The official Container Apps pricing page says Express and Sandboxes follow the Consumption Plan's pay-per-second pricing. The sandbox cost guide identifies running vCPU, running memory, and retained storage as the relevant resource categories. [Container Apps pricing](https://azure.microsoft.com/en-us/pricing/details/container-apps/) · [Sandbox cost guide](https://sandboxes.azure.com/docs/sandboxes/cost)
-
-| Cost component | Planning basis |
+| Gate | Evidence needed |
 | --- | --- |
-| Compute | Allocated cores × running seconds |
-| Memory | Allocated GiB × running seconds |
-| Stored state | Images, snapshots, and optional volumes retained |
-| Model | Your model provider's token or usage charges |
-| Supporting services | Telemetry, network services, evidence storage, and controller hosting |
+| Runtime compatibility | The complete pinned gh-aw stack runs under the proposed ACA restrictions |
+| Non-interactive Azure access | The trusted hosted job performs scoped operations without an interactive login |
+| Single-job runner | The intended workflow receives the job and the registration lifecycle is confirmed |
+| Network enforcement | Required traffic succeeds, prohibited traffic fails, and both outcomes are observable |
+| Output separation | Detection and publishing remain outside the agent workspace |
+| Failure recovery | Cancellation and partial provisioning leave no abandoned sandbox or runner after reconciliation |
+| Performance and value | Repeated runs establish total latency, resource use, model usage, and useful findings |
 
-Stopped sandboxes incur no CPU or memory charges. That does not mean every associated resource becomes free.
+For every gate, retain the versions, configuration, run identifier, result, and failure evidence. A list of planned tests is different from a list of passed tests.
 
-> [!note] Storage billing detail
-> As checked on October 11, the sandbox cost guide still labels storage charging **“coming soon”**, referencing Premium Azure Blob ZRS rates. It covers custom disk images, snapshots, and optional volumes; the guide says individual sandbox OS disks are not separately billed. Check the current guide before treating stored state as a permanent zero-cost resource.
+The first pilot should use a controlled fixture and staged outputs, allowing review before issues are created. Publication can follow once the result handling and permission boundary are demonstrated.
 
-The pricing page lists monthly Consumption grants of 180,000 vCPU-seconds and 360,000 GiB-seconds. Treat them as subscription-level allowances when planning; other usage can consume the available grant. Confirm your offer and effective regional rates in the pricing calculator.
+## Price the whole investigation
 
-### A worked compute estimate
+ACA's cost guide identifies allocated running CPU and memory, plus retained storage categories. At the documentation check on October 11, 2026, storage charging was still described as coming soon. That detail needs checking again when budgeting a deployment. [Sandbox cost guide](https://sandboxes.azure.com/docs/sandboxes/cost) · [Container Apps pricing](https://azure.microsoft.com/en-us/pricing/details/container-apps/)
 
-For illustration, assume **USD 0.000024 per vCPU-second** and **USD 0.000003 per GiB-second**. These are calculation inputs, not a verified regional quote for your subscription.
-
-A 1-vCPU, 2-GiB workspace running for ten minutes gives:
+The useful planning formula is:
 
 ```text
-CPU:     1 × 600 × 0.000024 = USD 0.0144
-Memory:  2 × 600 × 0.000003 = USD 0.0036
+sandbox_compute = running_seconds ×
+  ((allocated_vcpu × vcpu_rate) + (allocated_gib × memory_rate))
 
-Illustrative compute total = USD 0.018 per investigation
-1,000 investigations       = USD 18 before grants and other charges
+total_investigation_cost = sandbox_compute
+  + model_usage + hosted_jobs + telemetry
+  + applicable_network_and_storage_charges
 ```
 
-Substitute the calculator's rates in:
+Use effective rates for the subscription and region. Measure running time from provisioning through cleanup, including retries and idle periods.
 
-```text
-compute_cost =
-    running_seconds ×
-    ((allocated_vcpu × vcpu_rate) + (allocated_gib × memory_rate))
-```
+A warm snapshot might reduce setup while introducing baseline maintenance and retained state. A larger workspace might finish sooner while consuming more resources. Those are measurements to compare, not benefits to assume.
 
-For this design, I would measure **total cost per useful investigation**. Repeated model turns, unnecessary tool calls, and long-lived workspaces can matter more than shaving a few seconds off startup.
+The eventual success measure is cost per useful investigation, alongside diagnosis time and the quality of the evidence delivered to the engineer.
 
-## What I would validate before an enterprise pilot
+## Where I would take this next
 
-I would run a small set of concrete tests and retain the evidence.
+My first candidate is Option A because the existing workflow already provides controls I want to preserve. I would validate it with one prepared runtime, one failure fixture, and one staged report before expanding the pilot.
 
-| Test | Expected outcome |
-| --- | --- |
-| Execute a local command | Command works inside the workspace |
-| Contact an unapproved destination | Request is blocked and the decision is observable |
-| Request an unauthorized service through MCP | MCP authorization denies the request |
-| Supply malicious instructions in a CI log | Permissions stay unchanged; input is treated as evidence |
-| Ask for a production mutation | No tool or credential permits it |
-| Produce an unsupported finding | Validator rejects or flags missing evidence |
-| Cancel or time out an investigation | Controller and cleanup process remove abandoned resources |
-| Resume retained state | Observed behavior and retention match the chosen policy |
+If a genuine runtime constraint blocks that path, Option B deserves a separate design review, including the cost of rebuilding the surrounding controls. If neither improves the operating model enough to justify the complexity, keeping the hosted investigator remains a reasonable outcome.
 
-I would also test SDK compatibility, region capacity, image preparation time, and concurrent workspace limits. Fast startup does not remove quota planning.
+ACA Sandboxes gives this project an interesting execution foundation. The remaining work is to show that the investigator still functions under the restrictions, its authority stays bounded, its output remains reviewable, and its environment disappears when the job is over.
 
-A standard platform offering could package an approved image, reviewed network rules, bounded runtime, telemetry destinations, a report contract, and cleanup behavior. Then teams consume an investigation capability through a stable interface.
-
-That is where I see the enterprise value. We can give an agent enough room to investigate while keeping its reach, cost, and evidence understandable.
-
-## Where I would start
-
-Start with one sandbox, one failure fixture, and one report.
-
-Prove the network boundary. Add the read-only policy context. Measure whether the findings help an engineer understand the failure. Then integrate the trusted controller into CI.
-
-Azure Container Apps Sandboxes gives us a useful managed execution foundation for that work. The platform team's job is to turn it into an operating model: clear access, bounded execution, observable actions, and an approval path people can trust.
-
-## Related Posts
-
-- [[devops/your-policy-checks-are-green|Your Policy Checks Are Green. Your Impact Is Still Unknown.]]
-- [[devops/azure-application-gateway-for-containers|Azure Application Gateway for Containers]]
-- [[devops/kubernetes-v1-37-sneak-peek|Kubernetes v1.37 Sneak Peek: What Platform Engineers Should Actually Care About]]
-
+That is the part I want the implementation to prove.
