@@ -71,8 +71,8 @@ $ tree ~/devops --sort=date
     <span class="hero-card-path">~/devops/aca-sandboxes</span>
     <span class="hero-badge badge-active">NEW</span>
   </div>
-  <div class="hero-card-title">Taking a Governed CI Investigator to Azure Sandboxes</div>
-  <div class="hero-card-desc">An engineering feasibility deep dive into moving an agentic CI failure investigator into isolated Azure Container Apps microVMs without compromising governance.</div>
+  <div class="hero-card-title">Azure Container Apps Sandboxes</div>
+  <div class="hero-card-desc">Why agents need an enforced execution boundary, what Azure Container Apps Sandboxes provides, how it compares with NVIDIA OpenShell, and key architectural tradeoffs.</div>
   <div class="hero-card-footer">
     <div class="hero-card-tags">
       <span class="tag-link">sandboxes</span>
