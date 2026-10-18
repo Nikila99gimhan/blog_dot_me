@@ -35,6 +35,7 @@ aliases:
     <div><strong>Host:</strong> Sri Lanka Developer Forum (SLDF)</div>
     <div><strong>Format:</strong> 35-min Presentation & Live Demos + Audience Q&amp;A</div>
     <div><strong>Deck:</strong> 22 Slides (PDF available below)</div>
+    <div><strong>Demo Repo:</strong> <a href="https://github.com/Nikila99gimhan/session-beyond-failed-ci" target="_blank" rel="noopener">github.com/Nikila99gimhan/session-beyond-failed-ci ↗</a></div>
   </div>
 </div>
 
@@ -159,6 +160,30 @@ I walked through the main parts of the implementation:
 - **`gh-proxy`:** A mediated read path supplied permitted GitHub evidence, including CI runs, jobs, pull requests, and repository information.
 - **Policy MCP:** A temporary Node service in the CI worker exposed selected policy, ownership, approved SKU, and change-window context from a versioned sample catalog.
 - **Controlled publishing:** Separate output controls and a trusted publisher handled delivery back to GitHub, while required checks retained control of merging.
+
+The complete working code, GitHub Agentic Workflow definitions, Bicep modules, registered sample consumers, and policy MCP implementation shown during the live demos are available in the public demonstration repository:
+
+<div class="hero-card" style="margin: 1.5rem 0 2rem 0; pointer-events: auto;">
+  <div class="hero-card-header">
+    <div class="hero-card-dots">
+      <span class="dot-red"></span>
+      <span class="dot-yellow"></span>
+      <span class="dot-green"></span>
+    </div>
+    <span class="hero-card-path">github.com/Nikila99gimhan/session-beyond-failed-ci</span>
+    <span class="hero-badge badge-active">DEMO REPO</span>
+  </div>
+  <div class="hero-card-title">Session Demo: Governed CI Investigation</div>
+  <div class="hero-card-desc">Working GitHub Agentic Workflows (`gh-aw`), Bicep compiler error reproduction fixtures, downstream consumer drift safety gate, and local Policy MCP server demonstrated live on stage.</div>
+  <div class="hero-card-footer">
+    <div class="hero-card-tags">
+      <span class="tag-link">gh-aw</span>
+      <span class="tag-link">bicep</span>
+      <span class="tag-link">mcp-server</span>
+    </div>
+    <a href="https://github.com/Nikila99gimhan/session-beyond-failed-ci" target="_blank" rel="noopener" class="hero-card-action">View on GitHub ↗</a>
+  </div>
+</div>
 
 Execution also needed selection. An eligible completed CI run could start the appropriate follow-up path. For shared-module changes, scope and consumer evidence were checked before model use. An unchanged module or a passing assessment could avoid a new investigation; invalid evidence needed manual review.
 
