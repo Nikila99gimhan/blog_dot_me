@@ -88,6 +88,7 @@ const config: QuartzConfig = {
       Plugin.Static(),
       Plugin.NotFoundPage(),
       Plugin.CustomOgImages(),
+      Plugin.SeoFiles(),
       Plugin.CNAME(),
       Plugin.Favicon(),
     ],

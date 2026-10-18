@@ -1,5 +1,6 @@
 ---
 title: "About"
+seoTitle: "About Nikila Fernando — Microsoft MVP & Platform Engineer"
 date: 2026-09-20
 tags: [about, mvp, kubernetes, azure, aws, platform-engineering]
 description: "Nikila Fernando — Microsoft MVP, Platform & Site Reliability Engineer specializing in Kubernetes, cloud-native architecture, and multi-cloud infrastructure."

@@ -2,11 +2,12 @@ import { Root } from "hast"
 import { GlobalConfiguration } from "../../cfg"
 import { getDate } from "../../components/Date"
 import { escapeHTML } from "../../util/escape"
-import { FilePath, FullSlug, SimpleSlug, joinSegments, simplifySlug } from "../../util/path"
+import { FilePath, FullSlug, SimpleSlug, joinSegments } from "../../util/path"
 import { QuartzEmitterPlugin } from "../types"
 import { toHtml } from "hast-util-to-html"
 import { write } from "./helpers"
 import { i18n } from "../../i18n"
+import { AUTHOR, canonicalUrl, isoDay, pageKind } from "../../util/seo"
 
 export type ContentIndexMap = Map<FullSlug, ContentDetails>
 export type ContentDetails = {
@@ -41,23 +42,28 @@ const defaultOptions: Options = {
 
 function generateSiteMap(cfg: GlobalConfiguration, idx: ContentIndexMap): string {
   const base = cfg.baseUrl ?? ""
-  const createURLEntry = (slug: SimpleSlug, content: ContentDetails): string => `<url>
-    <loc>https://${joinSegments(base, encodeURI(slug))}</loc>
-    ${content.date && `<lastmod>${content.date.toISOString()}</lastmod>`}
+  const createURLEntry = (slug: FullSlug, content: ContentDetails): string => `<url>
+    <loc>${escapeHTML(canonicalUrl(base, slug))}</loc>${
+      content.date ? `\n    <lastmod>${isoDay(content.date)}</lastmod>` : ""
+    }
   </url>`
   const urls = Array.from(idx)
-    .map(([slug, content]) => createURLEntry(simplifySlug(slug), content))
+    .filter(([slug]) => pageKind(slug) !== "notfound")
+    .map(([slug, content]) => createURLEntry(slug, content))
     .join("")
-  return `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">${urls}</urlset>`
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls}</urlset>`
 }
 
 function generateRSSFeed(cfg: GlobalConfiguration, idx: ContentIndexMap, limit?: number): string {
   const base = cfg.baseUrl ?? ""
 
-  const createURLEntry = (slug: SimpleSlug, content: ContentDetails): string => `<item>
+  const createURLEntry = (slug: FullSlug, content: ContentDetails): string => `<item>
     <title>${escapeHTML(content.title)}</title>
-    <link>https://${joinSegments(base, encodeURI(slug))}</link>
-    <guid>https://${joinSegments(base, encodeURI(slug))}</guid>
+    <link>${escapeHTML(canonicalUrl(base, slug))}</link>
+    <guid isPermaLink="true">${escapeHTML(canonicalUrl(base, slug))}</guid>
+    <dc:creator>${AUTHOR.name}</dc:creator>
+    ${content.tags.map((tag) => `<category>${escapeHTML(tag)}</category>`).join("")}
     <description><![CDATA[ ${content.richContent ?? content.description} ]]></description>
     <pubDate>${content.date?.toUTCString()}</pubDate>
   </item>`
@@ -74,15 +80,18 @@ function generateRSSFeed(cfg: GlobalConfiguration, idx: ContentIndexMap, limit?:
 
       return f1.title.localeCompare(f2.title)
     })
-    .map(([slug, content]) => createURLEntry(simplifySlug(slug), content))
+    .map(([slug, content]) => createURLEntry(slug, content))
     .slice(0, limit ?? idx.size)
     .join("")
 
   return `<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
     <channel>
-      <title>${escapeHTML(cfg.pageTitle)}</title>
-      <link>https://${base}</link>
+      <title>${escapeHTML(cfg.pageTitle)} — ${AUTHOR.name}</title>
+      <link>https://${base}/</link>
+      <atom:link href="https://${base}/index.xml" rel="self" type="application/rss+xml" />
+      <language>en-us</language>
+      <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
       <description>${!!limit ? i18n(cfg.locale).pages.rss.lastFewNotes({ count: limit }) : i18n(cfg.locale).pages.rss.recentNotes} on ${escapeHTML(
         cfg.pageTitle,
       )}</description>

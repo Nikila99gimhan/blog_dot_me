@@ -11,6 +11,12 @@ tags:
   - platform-engineering
 description: "A recap of my GitHub Dev Days 2026 session at Microsoft Sri Lanka, exploring governed CI investigation with GitHub Copilot, GitHub Agentic Workflows and MCP."
 draft: false
+event:
+  name: "GitHub Dev Days 2026"
+  startDate: "2026-10-17"
+  location: "Microsoft Sri Lanka, Colombo, Sri Lanka"
+  organizer: "Sri Lanka Developer Forum"
+  organizerUrl: "https://www.devforum.lk/"
 aliases:
   - "/talks/governed-investigation"
   - "/tech-talks/when-ci-fails-github-dev-days-2026"

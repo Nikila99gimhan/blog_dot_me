@@ -4,9 +4,12 @@ import { write } from "./helpers"
 import { BuildCtx } from "../../util/ctx"
 import { VFile } from "vfile"
 import path from "path"
+import { canonicalUrl } from "../../util/seo"
 
 async function* processFile(ctx: BuildCtx, file: VFile) {
   const ogSlug = simplifySlug(file.data.slug!)
+  const baseUrl = ctx.cfg.configuration.baseUrl
+  const canonical = baseUrl ? canonicalUrl(baseUrl, file.data.slug!) : undefined
 
   for (const aliasTarget of file.data.aliases ?? []) {
     const aliasTargetSlug = (
@@ -23,7 +26,7 @@ async function* processFile(ctx: BuildCtx, file: VFile) {
         <html lang="en-us">
         <head>
         <title>${ogSlug}</title>
-        <link rel="canonical" href="${redirUrl}">
+        <link rel="canonical" href="${canonical ?? redirUrl}">
         <meta name="robots" content="noindex">
         <meta charset="utf-8">
         <meta http-equiv="refresh" content="0; url=${redirUrl}">

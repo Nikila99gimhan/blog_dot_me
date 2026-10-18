@@ -1,8 +1,9 @@
 ---
 title: "Tech Talks & Sessions"
+seoTitle: "Nikila Fernando Tech Talks — Platform Engineering, Kubernetes & GitHub Copilot Sessions"
 date: 2026-08-26
 tags: [tech-talks, presentations, platform-engineering, kubernetes, conferences]
-description: "Notes, slides, architecture walkthroughs, and summaries from technical talks and conference sessions."
+description: "Tech talks and conference sessions by Nikila Fernando: slides, demo repositories, and architecture walkthroughs on platform engineering, Kubernetes, and GitHub Copilot."
 draft: false
 ---
 

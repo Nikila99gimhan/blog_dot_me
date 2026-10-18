@@ -5,6 +5,15 @@ import { googleFontHref, googleFontSubsetHref } from "../util/theme"
 import { QuartzComponent, QuartzComponentConstructor, QuartzComponentProps } from "./types"
 import { unescapeHTML } from "../util/escape"
 import { CustomOgImagesEmitterName } from "../plugins/emitters/ogImage"
+import {
+  AUTHOR,
+  buildJsonLd,
+  canonicalUrl,
+  pageKeywords,
+  pageKind,
+  serializeJsonLd,
+  toIsoDate,
+} from "../util/seo"
 export default (() => {
   const Head: QuartzComponent = ({
     cfg,
@@ -13,8 +22,10 @@ export default (() => {
     ctx,
   }: QuartzComponentProps) => {
     const titleSuffix = cfg.pageTitleSuffix ?? ""
+    const seoTitle = fileData.frontmatter?.seoTitle as string | undefined
     const title =
-      (fileData.frontmatter?.title ?? i18n(cfg.locale).propertyDefaults.title) + titleSuffix
+      (seoTitle ?? fileData.frontmatter?.title ?? i18n(cfg.locale).propertyDefaults.title) +
+      titleSuffix
     const description =
       fileData.frontmatter?.socialDescription ??
       fileData.frontmatter?.description ??
@@ -27,9 +38,23 @@ export default (() => {
     const baseDir = fileData.slug === "404" ? path : pathToRoot(fileData.slug!)
     const iconPath = joinSegments(baseDir, "static/icon.png")
 
-    // Url of current page
+    const kind = pageKind(fileData.slug ?? "index")
+    const isArticle = kind === "post"
     const socialUrl =
-      fileData.slug === "404" ? url.toString() : joinSegments(url.toString(), fileData.slug!)
+      kind === "notfound" || !cfg.baseUrl
+        ? url.toString()
+        : canonicalUrl(cfg.baseUrl, fileData.slug!)
+    const tags = fileData.frontmatter?.tags ?? []
+    const publishedTime = toIsoDate(fileData.dates?.published ?? fileData.dates?.created)
+    const modifiedTime = toIsoDate(fileData.dates?.modified) ?? publishedTime
+    const robots =
+      kind === "notfound"
+        ? "noindex, follow"
+        : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    const jsonLd =
+      cfg.baseUrl && kind !== "notfound"
+        ? serializeJsonLd(buildJsonLd({ baseUrl: cfg.baseUrl, fileData, title, description }))
+        : undefined
 
     const usesCustomOgImage = ctx.cfg.plugins.emitters.some(
       (e) => e.name === CustomOgImagesEmitterName,
@@ -53,16 +78,31 @@ export default (() => {
         <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossOrigin="anonymous" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        <meta name="og:site_name" content={cfg.pageTitle}></meta>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={pageKeywords(tags)} />
+        <meta name="author" content={AUTHOR.name} />
+        <meta name="robots" content={robots} />
+        {cfg.baseUrl && kind !== "notfound" && <link rel="canonical" href={socialUrl} />}
+
+        <meta property="og:site_name" content="nikila.dev" />
+        <meta property="og:locale" content="en_US" />
         <meta property="og:title" content={title} />
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content={isArticle ? "article" : "website"} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image:alt" content={fileData.frontmatter?.title ?? title} />
+        {isArticle && (
+          <>
+            {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+            {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+            <meta property="article:author" content={AUTHOR.sameAs[1]} />
+            {tags.map((tag) => (
+              <meta property="article:tag" content={tag} />
+            ))}
+          </>
+        )}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image:alt" content={description} />
-        <meta name="keywords" content="Nikila Fernando, DevOps platform engineer, DevOps advocate, platform engineering, platform DevOps engineer" />
-        <meta name="author" content="Nikila Fernando" />
 
         {!usesCustomOgImage && (
           <>
@@ -78,15 +118,35 @@ export default (() => {
 
         {cfg.baseUrl && (
           <>
-            <meta property="twitter:domain" content={cfg.baseUrl}></meta>
             <meta property="og:url" content={socialUrl}></meta>
-            <meta property="twitter:url" content={socialUrl}></meta>
+            <link
+              rel="alternate"
+              type="text/plain"
+              title="LLM-readable site index"
+              href={`https://${cfg.baseUrl}/llms.txt`}
+            />
           </>
         )}
+        {AUTHOR.sameAs.slice(0, 2).map((href) => (
+          <link rel="me" href={href} />
+        ))}
 
         <link rel="icon" href={iconPath} />
-        <meta name="description" content={description} />
+        <link rel="apple-touch-icon" href={iconPath} />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: light)"
+          content={cfg.theme.colors.lightMode.light}
+        />
+        <meta
+          name="theme-color"
+          media="(prefers-color-scheme: dark)"
+          content={cfg.theme.colors.darkMode.light}
+        />
         <meta name="generator" content="Quartz" />
+        {jsonLd && (
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+        )}
 
         {css.map((resource) => CSSResourceToStyleElement(resource, true))}
         {js
