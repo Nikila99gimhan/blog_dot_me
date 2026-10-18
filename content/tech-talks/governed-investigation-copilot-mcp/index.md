@@ -177,6 +177,45 @@ The demo used a small policy catalog and two registered consumers. Extending it 
 
 ---
 
+## Event Photos & Highlights
+
+A few snapshots from the session at the Microsoft Sri Lanka auditorium, presenting to developers, platform engineers, and community members:
+
+<div class="terminal-gallery" data-gallery data-interval="3500">
+  <div class="terminal-gallery-header">
+    <div class="hero-card-dots">
+      <span class="dot-red"></span>
+      <span class="dot-yellow"></span>
+      <span class="dot-green"></span>
+    </div>
+    <span class="hero-card-path">~/events/github-dev-days-2026/photos</span>
+    <span class="hero-badge badge-active" data-gallery-counter>01 / 04</span>
+  </div>
+
+  <div class="terminal-gallery-viewport">
+    <div class="terminal-gallery-slides" data-gallery-slides>
+      <div class="terminal-gallery-slide active" data-index="0">
+        <img src="./event-photo-01.jpg" alt="Session presentation at Microsoft Sri Lanka Auditorium" loading="eager" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="1">
+        <img src="./event-photo-02.jpg" alt="Speaker stage and audience at GitHub Dev Days 2026" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="2">
+        <img src="./event-photo-03.jpg" alt="Technical walkthrough of governed CI investigation" loading="lazy" />
+      </div>
+      <div class="terminal-gallery-slide" data-index="3">
+        <img src="./event-photo-04.jpg" alt="Live demo with GitHub Copilot and Policy MCP" loading="lazy" />
+      </div>
+    </div>
+  </div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; margin: -1.2rem 0 2rem 0; font-size: 0.82rem; color: var(--gray, #59697b); font-family: var(--codeFont);">
+  <span>📸 <em>Session Highlights:</em> Click viewport or use ← / → keys to browse photos.</span>
+  <span>Microsoft Sri Lanka • 17 Oct 2026</span>
+</div>
+
+---
+
 ## What I wanted people to take away
 
 1. **Start with a useful investigation question.** Don't just regenerate scanner output in prose; synthesize the root cause, downstream impact, and immediate next steps.
