@@ -153,7 +153,7 @@ $ cat ~/community/organizer.yaml
       <span class="dot-green"></span>
     </div>
     <span class="hero-card-path">~/tech-talks</span>
-    <span class="hero-badge badge-upcoming">SESSIONS</span>
+    <span class="hero-badge badge-active">1 SESSION</span>
   </div>
   <div class="hero-card-title">📁 tech-talks/</div>
   <div class="hero-card-desc">Architecture walkthroughs, slide decks, and takeaways from conferences and tech sessions.</div>

@@ -17,6 +17,28 @@ $ cat ~/tech-talks/sessions.log
 
 <div class="hero-grid">
 
+<a href="/tech-talks/governed-investigation-copilot-mcp" class="hero-card">
+  <div class="hero-card-header">
+    <div class="hero-card-dots">
+      <span class="dot-red"></span>
+      <span class="dot-yellow"></span>
+      <span class="dot-green"></span>
+    </div>
+    <span class="hero-card-path">~/talks/when-ci-fails</span>
+    <span class="hero-badge badge-active">GITHUB DEV DAYS</span>
+  </div>
+  <div class="hero-card-title">When CI Fails: Governed Investigation with GitHub Copilot &amp; MCP</div>
+  <div class="hero-card-desc">Session recap and 22-slide deck from GitHub Dev Days 2026 at Microsoft Sri Lanka. Demonstrating agentic CI failure triage, shared module safety gates, and bounded MCP context.</div>
+  <div class="hero-card-footer">
+    <div class="hero-card-tags">
+      <span class="tag-link">copilot</span>
+      <span class="tag-link">mcp</span>
+      <span class="tag-link">github-actions</span>
+    </div>
+    <span class="hero-card-action">View Session &amp; Slides →</span>
+  </div>
+</a>
+
 <div class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
