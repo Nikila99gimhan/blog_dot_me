@@ -18,7 +18,7 @@ $ cat ~/tech-talks/sessions.log
 
 <div class="hero-grid">
 
-<a href="/tech-talks/governed-investigation-copilot-mcp" class="hero-card">
+<a href="/tech-talks/governed-investigation-copilot-mcp/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>

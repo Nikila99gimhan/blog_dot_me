@@ -65,22 +65,12 @@ You can browse the complete 22-slide deck inline below, or download the PDF dire
       <a href="./When-CI-Fails-Event-Slides.pdf" download="When-CI-Fails-Event-Slides.pdf" style="font-size: 0.85rem; font-weight: 600; text-decoration: underline;">Download PDF ↓</a>
     </div>
   </div>
-  <object
-    data="./When-CI-Fails-Event-Slides.pdf"
-    type="application/pdf"
-    width="100%"
-    height="580px"
-    style="border: 1px solid var(--lightgray, #d8e0ea); border-radius: 8px; background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.06);"
-  >
-    <iframe
-      src="./When-CI-Fails-Event-Slides.pdf"
-      width="100%"
-      height="580px"
-      style="border: none; border-radius: 8px;"
-    >
-      <p>Your browser does not support inline PDF viewing. <a href="./When-CI-Fails-Event-Slides.pdf">Download the slide deck</a> instead.</p>
-    </iframe>
-  </object>
+  <div class="pdf-lazy" data-pdf-src="/tech-talks/governed-investigation-copilot-mcp/When-CI-Fails-Event-Slides.pdf" data-pdf-title="When CI Fails: GitHub Dev Days 2026 slide deck">
+    <button type="button" class="pdf-lazy-trigger" aria-label="Load the 22-slide deck viewer (3.3 MB PDF)">
+      <img src="./when-ci-fails-cover.jpg" alt="When CI Fails slide deck cover" loading="lazy" />
+      <span class="pdf-lazy-cta">▶ View 22 slides inline · 3.3 MB PDF</span>
+    </button>
+  </div>
 </div>
 
 ---
@@ -226,16 +216,16 @@ A few snapshots from the session at the Microsoft Sri Lanka auditorium, presenti
   <div class="terminal-gallery-viewport">
     <div class="terminal-gallery-slides" data-gallery-slides>
       <div class="terminal-gallery-slide active" data-index="0">
-        <img src="./event-photo-01.jpg" alt="Session presentation at Microsoft Sri Lanka Auditorium" loading="eager" />
+        <img src="./event-photo-01.jpg" alt="Session presentation at Microsoft Sri Lanka Auditorium" loading="lazy" />
       </div>
       <div class="terminal-gallery-slide" data-index="1">
-        <img src="./event-photo-02.jpg" alt="Speaker stage and audience at GitHub Dev Days 2026" loading="lazy" />
+        <img data-src="/tech-talks/governed-investigation-copilot-mcp/event-photo-02.jpg" alt="Speaker stage and audience at GitHub Dev Days 2026" />
       </div>
       <div class="terminal-gallery-slide" data-index="2">
-        <img src="./event-photo-03.jpg" alt="Technical walkthrough of governed CI investigation" loading="lazy" />
+        <img data-src="/tech-talks/governed-investigation-copilot-mcp/event-photo-03.jpg" alt="Technical walkthrough of governed CI investigation" />
       </div>
       <div class="terminal-gallery-slide" data-index="3">
-        <img src="./event-photo-04.jpg" alt="Live demo with GitHub Copilot and Policy MCP" loading="lazy" />
+        <img data-src="/tech-talks/governed-investigation-copilot-mcp/event-photo-04.jpg" alt="Live demo with GitHub Copilot and Policy MCP" />
       </div>
     </div>
   </div>

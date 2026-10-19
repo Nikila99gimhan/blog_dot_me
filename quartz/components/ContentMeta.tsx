@@ -11,6 +11,8 @@ import { concatenateResources } from "../util/resources"
 import script from "./scripts/pageviews-tracker.inline"
 // @ts-ignore
 import galleryScript from "./scripts/gallery.inline"
+// @ts-ignore
+import pdfEmbedScript from "./scripts/pdfEmbed.inline"
 
 interface ContentMetaOptions {
   /**
@@ -70,7 +72,7 @@ export default ((opts?: Partial<ContentMetaOptions>) => {
   }
 
   ContentMetadata.css = style
-  ContentMetadata.afterDOMLoaded = concatenateResources(script, galleryScript)
+  ContentMetadata.afterDOMLoaded = concatenateResources(script, galleryScript, pdfEmbedScript)
 
   return ContentMetadata
 }) satisfies QuartzComponentConstructor

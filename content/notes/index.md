@@ -17,7 +17,7 @@ $ tree ~/notes --sort=date
 
 <div class="hero-grid">
 
-<a href="/notes/anyscale-on-azure" class="hero-card">
+<a href="/notes/anyscale-on-azure/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -39,7 +39,7 @@ $ tree ~/notes --sort=date
   </div>
 </a>
 
-<a href="/notes/arc-github-runners-platform-as-a-service" class="hero-card">
+<a href="/notes/arc-github-runners-platform-as-a-service/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>

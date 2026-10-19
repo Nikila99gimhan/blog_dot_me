@@ -14,18 +14,21 @@ function initGallery() {
 
     let currentIndex = 0
     let timer: number | null = null
+    let visible = false
     const intervalTime = parseInt(gallery.getAttribute("data-interval") || "3200", 10)
 
-    // Preload all slide images into memory immediately so auto-sliding is instant
-    slides.forEach((slide) => {
-      const img = slide.querySelector("img")
-      if (img && img.src) {
-        const preloader = new Image()
-        preloader.src = img.src
+    // Slides after the first carry data-src; load only the current and next image.
+    function hydrate(index: number) {
+      const img = slides[index]?.querySelector<HTMLImageElement>("img[data-src]")
+      if (img) {
+        img.src = img.dataset.src!
+        img.removeAttribute("data-src")
       }
-    })
+    }
 
     function updateUI() {
+      hydrate(currentIndex)
+      hydrate((currentIndex + 1) % slides.length)
       slides.forEach((slide, i) => {
         if (i === currentIndex) {
           slide.classList.add("active")
@@ -56,7 +59,7 @@ function initGallery() {
     }
 
     function startTimer() {
-      if (!timer) {
+      if (!timer && visible) {
         timer = window.setInterval(nextSlide, intervalTime)
       }
     }
@@ -73,9 +76,23 @@ function initGallery() {
       startTimer()
     }
 
+    // Autoplay only while the gallery is on screen.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting
+        if (visible) startTimer()
+        else stopTimer()
+      },
+      { threshold: 0.25 },
+    )
+    observer.observe(gallery)
+
     // Clean up timer on Quartz SPA navigation
     if (typeof window.addCleanup === "function") {
-      window.addCleanup(() => stopTimer())
+      window.addCleanup(() => {
+        stopTimer()
+        observer.disconnect()
+      })
     }
 
     // Click on viewport advances to next slide immediately

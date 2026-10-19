@@ -311,58 +311,58 @@ $ gallery-scan --source=~/community/events --auto
   <div class="terminal-gallery-viewport">
     <div class="terminal-gallery-slides" data-gallery-slides>
       <div class="terminal-gallery-slide active" data-index="0">
-        <img src="./images/event-01.jpg" alt="Developer Community Tech Meetup" loading="eager" />
+        <img src="./images/event-01.jpg" alt="Developer Community Tech Meetup" loading="lazy" />
       </div>
       <div class="terminal-gallery-slide" data-index="1">
-        <img src="./images/event-02.jpg" alt="Community Keynote and Speaker Session" loading="eager" />
+        <img data-src="/images/event-02.jpg" alt="Community Keynote and Speaker Session" />
       </div>
       <div class="terminal-gallery-slide" data-index="2">
-        <img src="./images/event-03.jpg" alt="Technical Keynote Presentation" loading="eager" />
+        <img data-src="/images/event-03.jpg" alt="Technical Keynote Presentation" />
       </div>
       <div class="terminal-gallery-slide" data-index="3">
-        <img src="./images/event-04.jpg" alt="Kubernetes and Cloud Architecture Stage Session" loading="eager" />
+        <img data-src="/images/event-04.jpg" alt="Kubernetes and Cloud Architecture Stage Session" />
       </div>
       <div class="terminal-gallery-slide" data-index="4">
-        <img src="./images/event-05.jpg" alt="DevOps Leadership and Platform Engineering Talk" loading="eager" />
+        <img data-src="/images/event-05.jpg" alt="DevOps Leadership and Platform Engineering Talk" />
       </div>
       <div class="terminal-gallery-slide" data-index="5">
-        <img src="./images/event-06.jpg" alt="Auditorium Technical Workshop" loading="eager" />
+        <img data-src="/images/event-06.jpg" alt="Auditorium Technical Workshop" />
       </div>
       <div class="terminal-gallery-slide" data-index="6">
-        <img src="./images/event-07.jpg" alt="Hands-on Workshop and Mentorship Session" loading="eager" />
+        <img data-src="/images/event-07.jpg" alt="Hands-on Workshop and Mentorship Session" />
       </div>
       <div class="terminal-gallery-slide" data-index="7">
-        <img src="./images/event-08.jpg" alt="Conference Podium Session on Distributed Platforms" loading="eager" />
+        <img data-src="/images/event-08.jpg" alt="Conference Podium Session on Distributed Platforms" />
       </div>
       <div class="terminal-gallery-slide" data-index="8">
-        <img src="./images/event-09.jpg" alt="Deep-Dive Session on Cloud-Native Technologies" loading="eager" />
+        <img data-src="/images/event-09.jpg" alt="Deep-Dive Session on Cloud-Native Technologies" />
       </div>
       <div class="terminal-gallery-slide" data-index="9">
-        <img src="./images/event-10.jpg" alt="Tech Summit Presentation" loading="eager" />
+        <img data-src="/images/event-10.jpg" alt="Tech Summit Presentation" />
       </div>
       <div class="terminal-gallery-slide" data-index="10">
-        <img src="./images/event-11.jpg" alt="Full-House Community Gathering" loading="eager" />
+        <img data-src="/images/event-11.jpg" alt="Full-House Community Gathering" />
       </div>
       <div class="terminal-gallery-slide" data-index="11">
-        <img src="./images/event-12.jpg" alt="Cloud Native Sri Lanka Community Gathering" loading="eager" />
+        <img data-src="/images/event-12.jpg" alt="Cloud Native Sri Lanka Community Gathering" />
       </div>
       <div class="terminal-gallery-slide" data-index="12">
-        <img src="./images/event-13.jpg" alt="Community Meetup and Interactive Technical Discussion" loading="eager" />
+        <img data-src="/images/event-13.jpg" alt="Community Meetup and Interactive Technical Discussion" />
       </div>
       <div class="terminal-gallery-slide" data-index="13">
-        <img src="./images/event-14.jpg" alt="Cloud Native Sri Lanka Technical Session" loading="eager" />
+        <img data-src="/images/event-14.jpg" alt="Cloud Native Sri Lanka Technical Session" />
       </div>
       <div class="terminal-gallery-slide" data-index="14">
-        <img src="./images/event-15.jpg" alt="Developer Forum Workshop and Speaker Presentation" loading="eager" />
+        <img data-src="/images/event-15.jpg" alt="Developer Forum Workshop and Speaker Presentation" />
       </div>
       <div class="terminal-gallery-slide" data-index="15">
-        <img src="./images/event-16.jpg" alt="Hands-on Lab and Developer Mentorship" loading="eager" />
+        <img data-src="/images/event-16.jpg" alt="Hands-on Lab and Developer Mentorship" />
       </div>
       <div class="terminal-gallery-slide" data-index="16">
-        <img src="./images/event-17.jpg" alt="Community Panel Discussion and Q&amp;A" loading="eager" />
+        <img data-src="/images/event-17.jpg" alt="Community Panel Discussion and Q&amp;A" />
       </div>
       <div class="terminal-gallery-slide" data-index="17">
-        <img src="./images/event-18.jpg" alt="Platform Engineering and Community Team Gathering" loading="eager" />
+        <img data-src="/images/event-18.jpg" alt="Platform Engineering and Community Team Gathering" />
       </div>
     </div>
   </div>

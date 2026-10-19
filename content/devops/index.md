@@ -17,7 +17,7 @@ $ tree ~/devops --sort=date
 
 <div class="hero-grid">
 
-<a href="/devops/azure-application-gateway-for-containers" class="hero-card">
+<a href="/devops/azure-application-gateway-for-containers/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -39,7 +39,7 @@ $ tree ~/devops --sort=date
   </div>
 </a>
 
-<a href="/devops/kubernetes-tls-certificate-management" class="hero-card">
+<a href="/devops/kubernetes-tls-certificate-management/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -61,7 +61,7 @@ $ tree ~/devops --sort=date
   </div>
 </a>
 
-<a href="/devops/azure-container-apps-sandboxes" class="hero-card">
+<a href="/devops/azure-container-apps-sandboxes/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -83,7 +83,7 @@ $ tree ~/devops --sort=date
   </div>
 </a>
 
-<a href="/devops/your-policy-checks-are-green" class="hero-card">
+<a href="/devops/your-policy-checks-are-green/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -105,7 +105,7 @@ $ tree ~/devops --sort=date
   </div>
 </a>
 
-<a href="/devops/kubernetes-v1-37-sneak-peek" class="hero-card">
+<a href="/devops/kubernetes-v1-37-sneak-peek/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>

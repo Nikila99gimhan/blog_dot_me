@@ -17,7 +17,7 @@ $ ls -lt ~/til
 
 <div class="hero-grid">
 
-<a href="/til/kubectl-explain-recursive" class="hero-card">
+<a href="/til/kubectl-explain-recursive/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -39,7 +39,7 @@ $ ls -lt ~/til
   </div>
 </a>
 
-<a href="/til/helm-atomic-flag" class="hero-card">
+<a href="/til/helm-atomic-flag/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -61,7 +61,7 @@ $ ls -lt ~/til
   </div>
 </a>
 
-<a href="/til/crictl-node-debugging" class="hero-card">
+<a href="/til/crictl-node-debugging/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>

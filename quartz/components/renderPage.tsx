@@ -27,7 +27,7 @@ export function pageResources(
   baseDir: FullSlug | RelativeURL,
   staticResources: StaticResources,
 ): StaticResources {
-  const contentIndexPath = joinSegments(baseDir, "static/contentIndex.json")
+  const contentIndexPath = `${joinSegments(baseDir, "static/contentIndex.json")}?v=${buildVersion}`
   const contentIndexScript = `const fetchData = fetch("${contentIndexPath}").then(data => data.json())`
 
   const resources: StaticResources = {
@@ -39,7 +39,7 @@ export function pageResources(
     ],
     js: [
       {
-        src: joinSegments(baseDir, "prescript.js"),
+        src: `${joinSegments(baseDir, "prescript.js")}?v=${buildVersion}`,
         loadTime: "beforeDOMReady",
         contentType: "external",
       },
@@ -55,7 +55,7 @@ export function pageResources(
   }
 
   resources.js.push({
-    src: joinSegments(baseDir, "postscript.js"),
+    src: `${joinSegments(baseDir, "postscript.js")}?v=${buildVersion}`,
     loadTime: "afterDOMReady",
     moduleType: "module",
     contentType: "external",

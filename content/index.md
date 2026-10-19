@@ -59,7 +59,7 @@ $ cat ~/community/organizer.yaml
 
 <div class="hero-grid">
 
-<a href="/devops" class="hero-card">
+<a href="/devops/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -81,7 +81,7 @@ $ cat ~/community/organizer.yaml
   </div>
 </a>
 
-<a href="/notes" class="hero-card">
+<a href="/notes/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -103,7 +103,7 @@ $ cat ~/community/organizer.yaml
   </div>
 </a>
 
-<a href="/til" class="hero-card">
+<a href="/til/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -125,7 +125,7 @@ $ cat ~/community/organizer.yaml
   </div>
 </a>
 
-<a href="/tools" class="hero-card">
+<a href="/tools/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -147,7 +147,7 @@ $ cat ~/community/organizer.yaml
   </div>
 </a>
 
-<a href="/tech-talks" class="hero-card">
+<a href="/tech-talks/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
@@ -169,7 +169,7 @@ $ cat ~/community/organizer.yaml
   </div>
 </a>
 
-<a href="/communities" class="hero-card">
+<a href="/communities/" class="hero-card">
   <div class="hero-card-header">
     <div class="hero-card-dots">
       <span class="dot-red"></span>
