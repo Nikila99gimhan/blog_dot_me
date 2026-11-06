@@ -59,7 +59,7 @@ function initGallery() {
     }
 
     function startTimer() {
-      if (!timer && visible) {
+      if (!timer && visible && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         timer = window.setInterval(nextSlide, intervalTime)
       }
     }

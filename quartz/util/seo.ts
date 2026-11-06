@@ -67,6 +67,7 @@ export function pageKind(slug: string): PageKind {
   if (slug === "404") return "notfound"
   if (slug === "about") return "about"
   if (slug === "tags" || slug.startsWith("tags/")) return "tag"
+  if (slug === "work" || slug === "blog") return "section"
   if (/^[^/]+\/index$/.test(slug)) return "section"
   return "post"
 }
@@ -81,7 +82,9 @@ export function canonicalUrl(baseUrl: string, slug: string): string {
 }
 
 export function sectionName(segment: string): string {
-  return SECTION_NAMES[segment] ?? segment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+  return (
+    SECTION_NAMES[segment] ?? segment.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+  )
 }
 
 // Mirrors the og:image resolution in plugins/emitters/ogImage.tsx.
@@ -239,7 +242,10 @@ export function buildJsonLd({ baseUrl, fileData, title, description }: JsonLdInp
     const crumbs = [{ name: "Home", item: root }]
     if (kind === "post" || kind === "tag") {
       if (segments.length > 1) {
-        crumbs.push({ name: sectionName(segments[0]), item: canonicalUrl(baseUrl, `${segments[0]}/index`) })
+        crumbs.push({
+          name: sectionName(segments[0]),
+          item: canonicalUrl(baseUrl, `${segments[0]}/index`),
+        })
       }
     }
     crumbs.push({ name: fileData.frontmatter?.title ?? title, item: url })

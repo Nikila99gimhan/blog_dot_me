@@ -12,6 +12,16 @@ draft: false
 > [!note]
 > Architecture walkthroughs, slide decks, and summaries from tech talks, community presentations, and conference sessions covering platform engineering, Kubernetes, and cloud-native architecture.
 
+## Sessions at a glance
+
+| Session | Event | Date | Slides | Demo | Recording |
+| --- | --- | --- | --- | --- | --- |
+| [When CI Fails: Governed Investigation with GitHub Copilot and MCP](/tech-talks/governed-investigation-copilot-mcp/) | GitHub Dev Days 2026 · Microsoft Sri Lanka | 17 Oct 2026 | [PDF, 22 slides](/tech-talks/governed-investigation-copilot-mcp/When-CI-Fails-Event-Slides.pdf) | [session-beyond-failed-ci](https://github.com/Nikila99gimhan/session-beyond-failed-ci) | — |
+
+Community organizing with Sri Lanka Developer Forum and Cloud Native Sri Lanka is on the [[communities/index|Communities]] page.
+
+## All sessions
+
 ```bash
 $ cat ~/tech-talks/sessions.log
 ```

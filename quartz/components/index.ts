@@ -24,6 +24,9 @@ import ConditionalRender from "./ConditionalRender"
 import ShareButtons from "./ShareButtons"
 import CommitGrid from "./CommitGrid"
 import PageViews from "./PageViews"
+import SiteNav from "./SiteNav"
+import PortfolioHome from "./PortfolioHome"
+import ArticleIndex from "./ArticleIndex"
 
 export {
   ArticleTitle,
@@ -52,4 +55,7 @@ export {
   ShareButtons,
   CommitGrid,
   PageViews,
+  SiteNav,
+  PortfolioHome,
+  ArticleIndex,
 }

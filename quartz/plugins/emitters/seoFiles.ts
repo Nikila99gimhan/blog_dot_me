@@ -56,7 +56,10 @@ function llmsTxt(baseUrl: string, posts: Entry[]): string {
   }
 
   const sections = [...bySection.entries()]
-    .map(([section, entries]) => `## ${sectionName(section)}\n\n${sortByDate(entries).map(entryLine).join("\n")}`)
+    .map(
+      ([section, entries]) =>
+        `## ${sectionName(section)}\n\n${sortByDate(entries).map(entryLine).join("\n")}`,
+    )
     .join("\n\n")
 
   return `# nikila.dev — ${AUTHOR.name}
@@ -135,7 +138,9 @@ export const SeoFiles: QuartzEmitterPlugin = () => ({
         .filter(Boolean)
         .join("\n")
       full.push(
-        [header, description && `> ${description}`, toPlainMarkdown(raw)].filter(Boolean).join("\n\n"),
+        [header, description && `> ${description}`, toPlainMarkdown(raw)]
+          .filter(Boolean)
+          .join("\n\n"),
       )
     }
     yield write({
